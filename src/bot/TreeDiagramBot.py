@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 import logging
 import sys
+from utils.configManager import ConfigManager
 
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_BETA_TOKEN')
@@ -40,10 +41,11 @@ class TreeDiagram(commands.Bot):
 
 
     async def _load_cogs(self) -> None:
-        for extension in ("patrolling",):
+        for extension in ("patrolling", "configuration"):
             await self.load_extension(f"commands.{extension}")
 
 bot = TreeDiagram(BOT_TOKEN)
+bot.configManager = ConfigManager()
 
 @bot.tree.command(name="ping", description="Get the bot's latency.")
 async def ping(interaction: discord.Interaction):
