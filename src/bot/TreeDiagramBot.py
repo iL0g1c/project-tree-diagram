@@ -34,15 +34,14 @@ class TreeDiagram(commands.Bot):
             synced = await self.tree.sync()
             self.logger.log(20, f"Synced {len(synced)} command(s)")
         except Exception as e:
-            self.logger.log(40, f"Exception while syncing commands. Error: {e}")
+            self.logger.log(40,     f"Exception while syncing commands. Error: {e}")
 
         self.logger.log(20, "Connecting to discord...")
 
 
     async def _load_cogs(self) -> None:
-        for filename in os.listdir('commands'):
-            if filename.endswith('.py'):
-                await self.load_extension(f'commands.{filename[:-3]}')
+        for extension in ("patrolling",):
+            await self.load_extension(f"commands.{extension}")
 
 bot = TreeDiagram(BOT_TOKEN)
 
