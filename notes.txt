@@ -24,3 +24,10 @@ get all pilots in database
 
 
 look up alternative database (idea relational database)
+
+user:
+    geofs account id
+    discord id
+    isonline
+    callsign
+    previous callsigns
