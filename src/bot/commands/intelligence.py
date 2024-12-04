@@ -5,8 +5,10 @@ import grpc
 from proto import get_user_callsign_changes_pb2 as database_service_pb2
 from proto import get_user_callsign_changes_pb2_grpc as database_service_pb2_grpc
 from google.protobuf.timestamp_pb2 import Timestamp
+from datetime import datetime
 import TreeDiagramBot as TreeDiagram
 import utils.validateUser as validateUser
+import utils.paginationEmbed as paginationEmbed
 
 class Intelligence(commands.Cog):
     def __init__(self, bot):
@@ -53,12 +55,15 @@ class Intelligence(commands.Cog):
                 if not response.events:
                     await interaction.followup.send(content="No callsign changes found.")
                 else:
-                    message = "```timestamp | Old Callsign | New Callsign\n"
+                    lines = []
                     for event in response.events:
-                        timestamp = event.timestamp
-                        message += f"{timestamp.seconds} | {event.old_callsign} | {event.new_callsign}\n"
-                    message += "```"
-                    await interaction.followup.send(message)
+                        timestamp = datetime.fromtimestamp(event.timestamp.seconds)
+                        lines.append(f"**Detected At:** {timestamp} | **Old Callsign:** {discord.utils.escape_markdown(event.old_callsign)} | **New Callsign:** {discord.utils.escape_markdown(event.new_callsign)}")
+                    embed = paginationEmbed.PaginatedEmbed(
+                        items=lines,
+                        title="Callsign Changes",
+                    )
+                    await interaction.followup.send(embed=embed.embed, view=embed)
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")
