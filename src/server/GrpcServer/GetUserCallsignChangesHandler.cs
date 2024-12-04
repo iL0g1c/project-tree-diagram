@@ -1,10 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using Npgsql;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.AspNetCore.Http;
 
 class GetUserCallsignChangesHandler
 {
@@ -16,7 +11,7 @@ class GetUserCallsignChangesHandler
         connectionString = dbLayer.connectionString;
     }
     
-    public List<(DateTime timestamp, string oldCallsign, string newCallsign)> GetCallsignChangesEvents(int user_id)
+    public List<(DateTime timestamp, string oldCallsign, string newCallsign)> GetCallsignChangesEvents(Int64 user_id)
     {
         try{
             List<(DateTime, string, string)> results = new List<(DateTime, string, string)>();
@@ -46,7 +41,7 @@ class GetUserCallsignChangesHandler
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine($"Error Code 3: {e.Message}");
             return new List<(DateTime, string, string)>();
         }
         

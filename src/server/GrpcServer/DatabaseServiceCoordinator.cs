@@ -1,17 +1,36 @@
 using Grpc.Core;
 
-public class DatabaseServiceCoordinator : UserCallsignChangesService.UserCallsignChangesServiceBase
+public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
 {
+    private readonly InsertUserDiscordIdHandler _insertUserDiscordIdHandler;
     private readonly GetUserCallsignChangesHandler _getUserCallsignChangesHandler;
 
     public DatabaseServiceCoordinator()
     {
+        _insertUserDiscordIdHandler = new InsertUserDiscordIdHandler();
         _getUserCallsignChangesHandler = new GetUserCallsignChangesHandler();
+    }
+
+    public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var isSuccessful = _insertUserDiscordIdHandler.InsertUserDiscordId(request.GeofsAccountId, request.DiscordId);
+            var response = new InsertUserDiscordIdResponse();
+            response.Success = isSuccessful;
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error Code 5: {e.Message}");
+            return new InsertUserDiscordIdResponse();
+        }
     }
 
     public override async Task<UserCallsignChangesResponse> GetUserCallsignChanges(UserCallsignChangesRequest request, ServerCallContext context)
     {
-        try {
+        try
+        {
             var events = _getUserCallsignChangesHandler.GetCallsignChangesEvents(request.GeofsAccountId);
             var response = new UserCallsignChangesResponse();
 
@@ -28,7 +47,7 @@ public class DatabaseServiceCoordinator : UserCallsignChangesService.UserCallsig
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine($"Error Code 2: {e.Message}");
             return new UserCallsignChangesResponse();
         }
     }

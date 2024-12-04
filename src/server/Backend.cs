@@ -35,7 +35,7 @@ public class Backend
         const int Port = 50051;
         var server = new Server
         {
-            Services = { UserCallsignChangesService.BindService(new DatabaseServiceCoordinator()) },
+            Services = { DatabaseService.BindService(new DatabaseServiceCoordinator()) },
             Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
         };
         

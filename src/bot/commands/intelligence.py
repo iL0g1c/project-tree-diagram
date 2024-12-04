@@ -2,8 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import grpc
-from proto import get_user_callsign_changes_pb2 as database_service_pb2
-from proto import get_user_callsign_changes_pb2_grpc as database_service_pb2_grpc
+from proto import database_service_pb2_grpc
+from proto import database_service_pb2
 from google.protobuf.timestamp_pb2 import Timestamp
 from datetime import datetime
 import utils.validateUser as validateUser
@@ -21,7 +21,15 @@ class Intelligence(commands.Cog):
     async def add_id_storage(self, interaction: discord.Interaction, discord_id: str, geofs_id: str):
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.config)
         if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
+            await interaction.response.defer()
+            with grpc.insecure_channel("localhost:50051") as channel:
+                stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
+                request = database_service_pb2.InsertUserDiscordIdRequest(discord_id=int(discord_id), geofs_account_id=int(geofs_id))
+                response = stub.InsertUserDiscordId(request)
+                if response.success:
+                    await interaction.followup.send(content="User added successfully.")
+                else:
+                    await interaction.followup.send(content="Failed to add user.")
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")
@@ -48,7 +56,7 @@ class Intelligence(commands.Cog):
         if user_role_check[0]:
             await interaction.response.defer()
             with grpc.insecure_channel("localhost:50051") as channel:
-                stub = database_service_pb2_grpc.UserCallsignChangesServiceStub(channel)
+                stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
                 request = database_service_pb2.UserCallsignChangesRequest(geofs_account_id=int(geofs_id))
                 response = stub.GetUserCallsignChanges(request)
                 if not response.events:

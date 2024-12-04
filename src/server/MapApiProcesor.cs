@@ -84,9 +84,9 @@ public class MapApiProcessor
             }
 
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Error Code 1: {e.Message}");
         }
     }
 
