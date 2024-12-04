@@ -1,7 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Linq;
+using System.Diagnostics;
 
 public class MapApiProcessor
 {
@@ -13,8 +18,8 @@ public class MapApiProcessor
     public MapApiProcessor()
     {
         _httpClient = new HttpClient();
-        _timer = new System.Timers.Timer(1000);
-        _timer.Elapsed += async (sender, e) => await ExevuteEventLoop();
+        _timer = new System.Timers.Timer(10000);
+        _timer.Elapsed += async (sender, e) => await ExecuteEventLoop();
         _isRunning = false;
         _databaseLayer = new DatabaseLayer();
     }
@@ -39,24 +44,45 @@ public class MapApiProcessor
         }
     }
 
-    private async Task ExevuteEventLoop()
+    private async Task ExecuteEventLoop()
     {
         try
         {
-            var payload = new
+            object payload = new
             {
-                id = "",
+                id = string.Empty,
                 gid = (object?)null
             };
 
-            var jsonPayload = System.Text.Json.JsonSerializer.Serialize(payload);
-            var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("https://mps.geo-fs.com/map", content);
+            string jsonPayload = JsonSerializer.Serialize(payload);
+            StringContent content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync("https://mps.geo-fs.com/map", content);
 
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response: {response.StatusCode}, Content: {responseContent}");
-            Console.WriteLine(responseContent);
-            _databaseLayer.ProcessUsers();
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                using (JsonDocument document = JsonDocument.Parse(jsonResponse))
+                {
+                    JsonElement root = document.RootElement;
+                    var filteredUsers = root.GetProperty("users")
+                        .EnumerateArray()
+                        .Where(user =>
+                            user.TryGetProperty("cs", out JsonElement csProp) &&
+                            csProp.GetString() != "Foo" &&
+                            user.TryGetProperty("acid", out JsonElement acidProp) &&
+                            acidProp.ValueKind != JsonValueKind.Null)
+                        .Select(user => new User
+                        {
+                            acid = user.GetProperty("acid").GetInt32(),
+                            callsign = user.GetProperty("cs").GetString()
+                        })
+                        .ToList();
+                    
+                    _databaseLayer.ProcessUsers(filteredUsers);
+                }
+            }
+
         }
         catch (Exception ex)
         {
@@ -64,4 +90,11 @@ public class MapApiProcessor
         }
     }
 
+    public class User
+    {
+        [JsonPropertyName("acid")]
+        public int acid { get; set; } = 0;
+        [JsonPropertyName("cs")]
+        public string callsign { get; set; } = string.Empty;
+    }
 }
