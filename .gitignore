@@ -1,0 +1,9 @@
+venv/*
+__pycache__
+src/bot/project_tree_diagram*
+data/config.json
+**/obj/
+*.sln
+*.csproj
+.env
+**/bin/

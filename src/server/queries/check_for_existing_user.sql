@@ -1,0 +1,1 @@
+SELECT callsign FROM Account WHERE geofs_account_id = @geofs_account_id;
