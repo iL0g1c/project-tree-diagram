@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 public class DatabaseLayer
 {
-    private readonly string connectionString;
+    public readonly string connectionString;
     public DatabaseLayer()
     {
         DotEnv.Load();

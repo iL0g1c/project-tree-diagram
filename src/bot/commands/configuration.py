@@ -1,8 +1,6 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-import TreeDiagramBot as TreeDiagram
-import utils.configManager as configManager
 import utils.validateUser as validateUser
 import utils.paginationEmbed as paginationEmbed
 
@@ -80,5 +78,5 @@ class Configuration(commands.Cog):
             else:
                 await interaction.response.send_message(user_role_check[1])
 
-async def setup(bot: TreeDiagram):
+async def setup(bot):
     await bot.add_cog(Configuration(bot))
