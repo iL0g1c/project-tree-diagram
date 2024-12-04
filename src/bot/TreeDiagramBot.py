@@ -41,7 +41,7 @@ class TreeDiagram(commands.Bot):
 
 
     async def _load_cogs(self) -> None:
-        for extension in ("patrolling", "configuration"):
+        for extension in ("patrolling", "configuration", "intelligence"):
             await self.load_extension(f"commands.{extension}")
 
 bot = TreeDiagram(BOT_TOKEN)

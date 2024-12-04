@@ -8,6 +8,8 @@ setup(
     install_requires=[
         "discord.py",
         "python-dotenv",
-        "datetime"
+        "datetime",
+        "grpcio",
+        "grpcio-tools",
     ],
 )

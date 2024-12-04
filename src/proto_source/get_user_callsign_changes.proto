@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message UserCallsignChangeEvent {
+    google.protobuf.Timestamp timestamp = 1;
+    string old_callsign = 2;
+    string new_callsign = 3;
+}
+
+message UserCallsignChangesResponse {
+    repeated UserCallsignChangeEvent events = 1;
+}
+
+service UserCallsignChangesService {
+    rpc GetUserCallsignChanges (UserCallsignChangesRequest) returns (UserCallsignChangesResponse);
+}
+
+message UserCallsignChangesRequest {
+    int32 geofs_account_id = 1;
+}
