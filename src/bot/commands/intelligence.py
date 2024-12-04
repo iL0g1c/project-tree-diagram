@@ -36,17 +36,6 @@ class Intelligence(commands.Cog):
             else:
                 await interaction.response.send_message(user_role_check[1])
 
-    @intelligence_group.command(name="all", description="Get all pilots in the ID storage database.")
-    async def get_ids_storage(self, interaction: discord.Interaction):
-        user_role_check = validateUser.validateUser(interaction.user, 2, self.bot.configManager.config)
-        if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
-
     @intelligence_group.command(name="callsign-changes", description="Get callsign changes of a GeoFS pilot.")
     @app_commands.describe(geofs_id="GeoFS ID of the pilot.")
     async def get_ccls(self, interaction: discord.Interaction, geofs_id: str):
@@ -71,29 +60,6 @@ class Intelligence(commands.Cog):
                         title="Callsign Changes",
                     )
                     await interaction.followup.send(embed=embed.embed, view=embed)
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
-
-    @intelligence_group.command(name="purge-pilots", description="Remove from the ID storage database and add them to the ID database.")
-    async def remove_ids_storage(self, interaction: discord.Interaction):
-        user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.config)
-        if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
-
-    @intelligence_group.command(name="remove-id", description="Remove a pilot from the ID storage database.")
-    @app_commands.describe(discord_id="Discord ID of the pilot.")
-    async def remove_id_storage(self, interaction: discord.Interaction, discord_id: str):
-        user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.config)
-        if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")
