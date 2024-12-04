@@ -30,4 +30,3 @@ user:
     discord id
     isonline
     callsign
-    previous callsigns
