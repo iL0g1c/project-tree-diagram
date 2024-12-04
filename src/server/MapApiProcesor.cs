@@ -75,7 +75,7 @@ public class MapApiProcessor
                         .Select(user => new User
                         {
                             acid = user.GetProperty("acid").GetInt32(),
-                            callsign = user.GetProperty("cs").GetString()
+                            callsign = user.GetProperty("cs").GetString() ?? string.Empty
                         })
                         .ToList();
                     

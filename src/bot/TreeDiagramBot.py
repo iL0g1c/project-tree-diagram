@@ -44,14 +44,12 @@ class TreeDiagram(commands.Bot):
         for extension in ("patrolling", "configuration", "intelligence"):
             await self.load_extension(f"commands.{extension}")
 
-bot = TreeDiagram(BOT_TOKEN)
-bot.configManager = ConfigManager()
-
-@bot.tree.command(name="ping", description="Get the bot's latency.")
-async def ping(interaction: discord.Interaction):
-    await interaction.response.send_message("# Pong! :ping_pong:\nLatency: " + str(bot.latency*1000) + "ms")
-
 def main():
+    bot = TreeDiagram(BOT_TOKEN)
+    bot.configManager = ConfigManager()
+    @bot.tree.command(name="ping", description="Get the bot's latency.")
+    async def ping(interaction: discord.Interaction):
+        await interaction.response.send_message("# Pong! :ping_pong:\nLatency: " + str(bot.latency*1000) + "ms")
     bot.run(BOT_TOKEN)
 
 if __name__ == "__main__":

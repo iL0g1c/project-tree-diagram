@@ -6,7 +6,6 @@ from proto import get_user_callsign_changes_pb2 as database_service_pb2
 from proto import get_user_callsign_changes_pb2_grpc as database_service_pb2_grpc
 from google.protobuf.timestamp_pb2 import Timestamp
 from datetime import datetime
-import TreeDiagramBot as TreeDiagram
 import utils.validateUser as validateUser
 import utils.paginationEmbed as paginationEmbed
 
@@ -93,5 +92,5 @@ class Intelligence(commands.Cog):
             else:
                 await interaction.response.send_message(user_role_check[1])
 
-async def setup(bot: TreeDiagram):
+async def setup(bot):
     await bot.add_cog(Intelligence(bot))

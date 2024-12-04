@@ -2,7 +2,7 @@ using Grpc.Core;
 
 public class DatabaseServiceCoordinator : UserCallsignChangesService.UserCallsignChangesServiceBase
 {
-    private readonly new GetUserCallsignChangesHandler _getUserCallsignChangesHandler;
+    private readonly GetUserCallsignChangesHandler _getUserCallsignChangesHandler;
 
     public DatabaseServiceCoordinator()
     {
