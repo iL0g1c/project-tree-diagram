@@ -61,6 +61,7 @@ public class MapApiProcessor
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine(jsonResponse);
 
                 using (JsonDocument document = JsonDocument.Parse(jsonResponse))
                 {
@@ -72,10 +73,17 @@ public class MapApiProcessor
                             csProp.GetString() != "Foo" &&
                             user.TryGetProperty("acid", out JsonElement acidProp) &&
                             acidProp.ValueKind != JsonValueKind.Null)
-                        .Select(user => new User
+                        .Select(user =>
                         {
-                            acid = user.GetProperty("acid").GetInt32(),
-                            callsign = user.GetProperty("cs").GetString() ?? string.Empty
+                            var acid = user.GetProperty("acid").GetInt32();
+                            var callsign = user.GetProperty("cs").GetString() ?? string.Empty;
+                            Debug.WriteLine($"Processing User - ACID: {acid}, Callsign: {callsign}");
+
+                            return new User
+                            {
+                                acid = acid,
+                                callsign = callsign
+                            };
                         })
                         .ToList();
                     
@@ -87,6 +95,7 @@ public class MapApiProcessor
         catch (Exception e)
         {
             Console.WriteLine($"Error Code 1: {e.Message}");
+            Console.WriteLine(e.StackTrace);
         }
     }
 

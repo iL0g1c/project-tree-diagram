@@ -28,5 +28,9 @@ get all pilots in database
 Loops:
     ABS | Air Base System detects threats that are heading towards an airbase
     APS | Automatic Patrol System
-    CCS | Callsign Change System
-    
+    CCLS | Callsign Change System (COMPLETE)
+    CDS | Chatlogger Detection System
+    ELS | Event Logging System
+    EWS | Early Warning System
+    GPVS | General Purpose VC System
+    PCS | Periodic Code System
