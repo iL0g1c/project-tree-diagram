@@ -23,10 +23,10 @@ remove pilot from id database
 get all pilots in database
 
 
-look up alternative database (idea relational database)
 
-user:
-    geofs account id
-    discord id
-    isonline
-    callsign
+
+Loops:
+    ABS | Air Base System detects threats that are heading towards an airbase
+    APS | Automatic Patrol System
+    CCS | Callsign Change System
+    

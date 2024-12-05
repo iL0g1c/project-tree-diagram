@@ -19,7 +19,7 @@ public class MapApiProcessor
     {
         _httpClient = new HttpClient();
         _timer = new System.Timers.Timer(10000);
-        _timer.Elapsed += async (sender, e) => await ExecuteEventLoop();
+        _timer.Elapsed += async (sender, e) => await GetOnlineUsers();
         _isRunning = false;
         _databaseLayer = new DatabaseLayer();
     }
@@ -44,7 +44,7 @@ public class MapApiProcessor
         }
     }
 
-    private async Task ExecuteEventLoop()
+    private async Task GetOnlineUsers()
     {
         try
         {
@@ -79,7 +79,7 @@ public class MapApiProcessor
                         })
                         .ToList();
                     
-                    _databaseLayer.ProcessUsers(filteredUsers);
+                    _databaseLayer.ExecuteEventLoop(filteredUsers);
                 }
             }
 
