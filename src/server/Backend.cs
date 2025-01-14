@@ -21,6 +21,8 @@ public class Backend
         };
         
         server.Start();
+        Random rnd = new Random();
+        Console.WriteLine(rnd.Next(1,100));
         Console.WriteLine("Server listening on port " + Port);
     }
 

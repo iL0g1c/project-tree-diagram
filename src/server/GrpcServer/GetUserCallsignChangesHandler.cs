@@ -18,7 +18,6 @@ class GetUserCallsignChangesHandler
 
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
-                Console.WriteLine(1);
                 connection.Open();
                 string query = File.ReadAllText("queries/get_user_callsign_changes.sql");
 
