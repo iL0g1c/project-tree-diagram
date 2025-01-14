@@ -1,4 +1,4 @@
-venv/*
+src/venv/*
 __pycache__
 src/bot/project_tree_diagram*
 data/config.json
@@ -7,3 +7,5 @@ data/config.json
 *.csproj
 .env
 **/bin/
+src/build/*
+*.egg

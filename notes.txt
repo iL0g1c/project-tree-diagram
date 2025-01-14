@@ -24,7 +24,6 @@ get all pilots in database
 
 
 
-
 Loops:
     ABS | Air Base System detects threats that are heading towards an airbase
     APS | Automatic Patrol System
