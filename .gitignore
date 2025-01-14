@@ -3,6 +3,7 @@ __pycache__
 src/bot/project_tree_diagram*
 data/config.json
 **/obj/
+./publish/*
 *.sln
 .env
 **/bin/
