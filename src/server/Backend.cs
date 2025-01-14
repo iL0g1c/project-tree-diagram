@@ -5,6 +5,7 @@ public class Backend
 
     public static void Main(string[] args)
     {
+        Console.WriteLine("Starting up...");
         StartGrpcServer();
         MapApiProcessor _mapApiProcessor = new MapApiProcessor();
         _mapApiProcessor.Start();
