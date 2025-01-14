@@ -61,7 +61,6 @@ public class MapApiProcessor
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine(jsonResponse);
 
                 using (JsonDocument document = JsonDocument.Parse(jsonResponse))
                 {
