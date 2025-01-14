@@ -9,6 +9,7 @@ public class Backend
         StartGrpcServer();
         MapApiProcessor _mapApiProcessor = new MapApiProcessor();
         _mapApiProcessor.Start();
+        Task.Delay(-1).Wait();
     }
 
     private static void StartGrpcServer()
