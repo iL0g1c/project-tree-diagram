@@ -26,6 +26,7 @@ public class MapApiProcessor
 
     public void Start()
     {
+        Console.WriteLine("IT WORKS");
         if (!_isRunning)
         {
             _timer.Start();
