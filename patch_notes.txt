@@ -1,0 +1,6 @@
+0.1.0-beta
+=============================
+Full integration into external server.
+Automatic patrol logging
+online - offline alerts
+outputing new callsigns to discord channel (if viable)

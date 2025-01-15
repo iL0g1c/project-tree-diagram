@@ -2,7 +2,8 @@ CREATE TABLE Account (
     geofs_account_id BIGINT PRIMARY KEY,
     discord_id BIGINT,
     is_online BOOLEAN,
-    callsign VARCHAR(50)
+    callsign VARCHAR(50),
+    force_code VARCHAR(10)
 );
 
 CREATE TABLE callsign_change (
