@@ -67,6 +67,7 @@ public class MapApiProcessor
                     JsonElement root = document.RootElement;
                     var filteredUsers = root.GetProperty("users")
                         .EnumerateArray()
+                        .Where(user => user.ValueKind != JsonValueKind.Null)
                         .Where(user =>
                             user.TryGetProperty("cs", out JsonElement csProp) &&
                             csProp.GetString() != "Foo" &&
@@ -77,7 +78,6 @@ public class MapApiProcessor
                             var acid = user.GetProperty("acid").GetInt32();
                             var callsign = user.GetProperty("cs").GetString() ?? string.Empty;
                             // Debug.WriteLine($"Processing User - ACID: {acid}, Callsign: {callsign}");
-
                             return new User
                             {
                                 acid = acid,

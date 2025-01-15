@@ -6,6 +6,7 @@ service DatabaseService {
     rpc GetUserCallsignChanges (UserCallsignChangesRequest) returns (UserCallsignChangesResponse);
     rpc InsertUserDiscordId (InsertUserDiscordIdRequest) returns (InsertUserDiscordIdResponse);
     rpc UpdateUserForceCode (UpdateUserForceCodeRequest) returns (UpdateUserForceCodeResponse);
+    rpc InsertNewGuild (InsertNewGuildRequest) returns (InsertNewGuildResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -38,5 +39,13 @@ message UpdateUserForceCodeRequest {
 }
 
 message UpdateUserForceCodeResponse {
+    bool success = 1;
+}
+
+message InsertNewGuildRequest {
+    int64 guild_id = 1;
+}
+
+message InsertNewGuildResponse {
     bool success = 1;
 }

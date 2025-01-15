@@ -4,6 +4,7 @@ Full integration into external server.
 Automatic patrol logging
 online - offline alerts
 outputing new callsigns to discord channel (if viable)
+multi force support
 
 
 add force table to replace configuration file

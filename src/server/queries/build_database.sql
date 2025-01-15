@@ -25,11 +25,12 @@ CREATE TABLE online_status_change (
     REFERENCES Account (geofs_account_id)
 );
 
-CREATE TABLE Forces {
-    force_code VARCHAR(10) PRIMARY KEY,
+CREATE TABLE Forces (
+    guild_id BIGINT PRIMARY KEY,
+    force_code VARCHAR(10),
     developer_role_id BIGINT,
     high_command_role_id BIGINT,
     member_role_id BIGINT,
     player_activity_channel_id BIGINT,
     patrol_log_channel_id BIGINT
-}
+);

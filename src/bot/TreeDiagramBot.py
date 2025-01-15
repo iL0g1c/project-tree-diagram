@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 import os
 import logging
 import sys
+import grpc
+from proto import database_service_pb2_grpc
+from proto import database_service_pb2
 from utils.configManager import ConfigManager
 
 load_dotenv()
@@ -43,6 +46,16 @@ class TreeDiagram(commands.Bot):
     async def _load_cogs(self) -> None:
         for extension in ("configuration", "force", "intelligence", "patrolling"):
             await self.load_extension(f"commands.{extension}")
+
+    async def on_guild_join(self, guild):
+        with grpc.insecure_channel("localhost:50051") as channel:
+            stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
+            request = database_service_pb2.InsertNewGuildRequest(guild_id=int(guild.id))
+            response = stub.InsertNewGuild(request)
+            if response.success:
+                self.logger.log(20, f"Joined guild: {guild.name}")
+            else:
+                self.logger.log(40, f"Failed guild setup: {guild.name}")
 
 def main():
     bot = TreeDiagram(BOT_TOKEN)

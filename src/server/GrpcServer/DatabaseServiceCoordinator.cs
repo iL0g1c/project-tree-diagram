@@ -5,12 +5,14 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly InsertUserDiscordIdHandler _insertUserDiscordIdHandler;
     private readonly GetUserCallsignChangesHandler _getUserCallsignChangesHandler;
     private readonly UpdateUserForceCodeHandler _updateUserForceCodeHandler;
+    private readonly InsertNewGuildHandler _insertNewGuildHandler;
 
     public DatabaseServiceCoordinator()
     {
         _insertUserDiscordIdHandler = new InsertUserDiscordIdHandler();
         _getUserCallsignChangesHandler = new GetUserCallsignChangesHandler();
         _updateUserForceCodeHandler = new UpdateUserForceCodeHandler();
+        _insertNewGuildHandler = new InsertNewGuildHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -67,6 +69,22 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             Console.WriteLine($"Error Code 3: {e.Message}");
             return new UpdateUserForceCodeResponse();
+        }
+    }
+
+    public override async Task<InsertNewGuildResponse> InsertNewGuild(InsertNewGuildRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var isSuccessful = _insertNewGuildHandler.InsertNewGuild(request.GuildId);
+            var response = new InsertNewGuildResponse();
+            response.Success = isSuccessful;
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error Code 4: {e.Message}");
+            return new InsertNewGuildResponse();
         }
     }
 }
