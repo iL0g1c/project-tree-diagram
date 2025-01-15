@@ -24,3 +24,12 @@ CREATE TABLE online_status_change (
     CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
     REFERENCES Account (geofs_account_id)
 );
+
+CREATE TABLE Forces {
+    force_code VARCHAR(10) PRIMARY KEY,
+    developer_role_id BIGINT,
+    high_command_role_id BIGINT,
+    member_role_id BIGINT,
+    player_activity_channel_id BIGINT,
+    patrol_log_channel_id BIGINT
+}

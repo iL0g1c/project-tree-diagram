@@ -4,3 +4,8 @@ Full integration into external server.
 Automatic patrol logging
 online - offline alerts
 outputing new callsigns to discord channel (if viable)
+
+
+add force table to replace configuration file
+In PilotActivityLogger loop if each account id of a row in account table has a forcec_code of not null,
+then output to the forces online-offline channel the activity change.
