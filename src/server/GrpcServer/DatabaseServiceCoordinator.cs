@@ -7,7 +7,6 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
 
     public DatabaseServiceCoordinator()
     {
-        Console.WriteLine(1);
         _insertUserDiscordIdHandler = new InsertUserDiscordIdHandler();
         _getUserCallsignChangesHandler = new GetUserCallsignChangesHandler();
     }
