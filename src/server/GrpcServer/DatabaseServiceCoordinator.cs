@@ -4,11 +4,13 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
 {
     private readonly InsertUserDiscordIdHandler _insertUserDiscordIdHandler;
     private readonly GetUserCallsignChangesHandler _getUserCallsignChangesHandler;
+    private readonly UpdateUserForceCodeHandler _updateUserForceCodeHandler;
 
     public DatabaseServiceCoordinator()
     {
         _insertUserDiscordIdHandler = new InsertUserDiscordIdHandler();
         _getUserCallsignChangesHandler = new GetUserCallsignChangesHandler();
+        _updateUserForceCodeHandler = new UpdateUserForceCodeHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -49,6 +51,22 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             Console.WriteLine($"Error Code 2: {e.Message}");
             return new UserCallsignChangesResponse();
+        }
+    }
+
+    public override async Task<UpdateUserForceCodeResponse> UpdateUserForceCode(UpdateUserForceCodeRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var isSuccessful = _updateUserForceCodeHandler.UpdateUserForceCode(request.GeofsAccountId, request.DiscordId, request.ForceCode);
+            var response = new UpdateUserForceCodeResponse();
+            response.Success = isSuccessful;
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error Code 3: {e.Message}");
+            return new UpdateUserForceCodeResponse();
         }
     }
 }

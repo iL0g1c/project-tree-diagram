@@ -76,7 +76,7 @@ public class MapApiProcessor
                         {
                             var acid = user.GetProperty("acid").GetInt32();
                             var callsign = user.GetProperty("cs").GetString() ?? string.Empty;
-                            Debug.WriteLine($"Processing User - ACID: {acid}, Callsign: {callsign}");
+                            // Debug.WriteLine($"Processing User - ACID: {acid}, Callsign: {callsign}");
 
                             return new User
                             {

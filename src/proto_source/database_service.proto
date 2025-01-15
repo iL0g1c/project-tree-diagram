@@ -5,6 +5,7 @@ import "google/protobuf/timestamp.proto";
 service DatabaseService {
     rpc GetUserCallsignChanges (UserCallsignChangesRequest) returns (UserCallsignChangesResponse);
     rpc InsertUserDiscordId (InsertUserDiscordIdRequest) returns (InsertUserDiscordIdResponse);
+    rpc UpdateUserForceCode (UpdateUserForceCodeRequest) returns (UpdateUserForceCodeResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -27,5 +28,15 @@ message InsertUserDiscordIdRequest {
 }
 
 message InsertUserDiscordIdResponse {
+    bool success = 1;
+}
+
+message UpdateUserForceCodeRequest {
+    int64 geofs_account_id = 1;
+    int64 discord_id = 2;
+    string force_code = 3;
+}
+
+message UpdateUserForceCodeResponse {
     bool success = 1;
 }

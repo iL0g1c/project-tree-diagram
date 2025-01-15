@@ -15,7 +15,7 @@ class Intelligence(commands.Cog):
 
     intelligence_group = app_commands.Group(name="intelligence", description="GeoFS Intelligence Commands")
 
-    @intelligence_group.command(name="add-id", description="Add a pilot to the ID storage database.")
+    @intelligence_group.command(name="add-id", description="Associate a pilot's Discord ID with their GeoFS ID.")
     @app_commands.describe(discord_id="Discord ID of the pilot.", geofs_id="GeoFS ID of the pilot.")
     # create a discord slash command that adds a pilot to the id storage database with their discord id and geofs id
     async def add_id_storage(self, interaction: discord.Interaction, discord_id: str, geofs_id: str):

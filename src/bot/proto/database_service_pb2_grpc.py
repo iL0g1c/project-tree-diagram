@@ -5,7 +5,7 @@ import warnings
 
 from proto import database_service_pb2 as database__service__pb2
 
-GRPC_GENERATED_VERSION = '1.68.1'
+GRPC_GENERATED_VERSION = '1.69.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -44,6 +44,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.InsertUserDiscordIdRequest.SerializeToString,
                 response_deserializer=database__service__pb2.InsertUserDiscordIdResponse.FromString,
                 _registered_method=True)
+        self.UpdateUserForceCode = channel.unary_unary(
+                '/DatabaseService/UpdateUserForceCode',
+                request_serializer=database__service__pb2.UpdateUserForceCodeRequest.SerializeToString,
+                response_deserializer=database__service__pb2.UpdateUserForceCodeResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -61,6 +66,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdateUserForceCode(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -73,6 +84,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.InsertUserDiscordId,
                     request_deserializer=database__service__pb2.InsertUserDiscordIdRequest.FromString,
                     response_serializer=database__service__pb2.InsertUserDiscordIdResponse.SerializeToString,
+            ),
+            'UpdateUserForceCode': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateUserForceCode,
+                    request_deserializer=database__service__pb2.UpdateUserForceCodeRequest.FromString,
+                    response_serializer=database__service__pb2.UpdateUserForceCodeResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -129,6 +145,33 @@ class DatabaseService(object):
             '/DatabaseService/InsertUserDiscordId',
             database__service__pb2.InsertUserDiscordIdRequest.SerializeToString,
             database__service__pb2.InsertUserDiscordIdResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateUserForceCode(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/UpdateUserForceCode',
+            database__service__pb2.UpdateUserForceCodeRequest.SerializeToString,
+            database__service__pb2.UpdateUserForceCodeResponse.FromString,
             options,
             channel_credentials,
             insecure,
