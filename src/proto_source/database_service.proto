@@ -1,5 +1,7 @@
 syntax = "proto3";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
 
 
 service DatabaseService {
@@ -7,6 +9,7 @@ service DatabaseService {
     rpc InsertUserDiscordId (InsertUserDiscordIdRequest) returns (InsertUserDiscordIdResponse);
     rpc UpdateUserForceCode (UpdateUserForceCodeRequest) returns (UpdateUserForceCodeResponse);
     rpc InsertNewGuild (InsertNewGuildRequest) returns (InsertNewGuildResponse);
+    rpc GetConfigurationKeys (GetConfigurationKeysRequest) returns (GetConfigurationKeysResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -48,4 +51,21 @@ message InsertNewGuildRequest {
 
 message InsertNewGuildResponse {
     bool success = 1;
+}
+
+message GetConfigurationKeysRequest {
+    int64 guild_id = 1;
+}
+
+message Value {
+    oneof value {
+        string string_value = 1;
+        int64 int_value = 2;
+        bool bool_value = 3;
+        google.protobuf.Timestamp timestamp_value = 4;
+    }
+}
+
+message GetConfigurationKeysResponse {
+    map<string, google.protobuf.Any> keys = 1;
 }

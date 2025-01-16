@@ -1,4 +1,6 @@
 using Grpc.Core;
+using Google.Protobuf.WellKnownTypes;
+using Google.Protobuf;
 
 public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
 {
@@ -6,6 +8,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetUserCallsignChangesHandler _getUserCallsignChangesHandler;
     private readonly UpdateUserForceCodeHandler _updateUserForceCodeHandler;
     private readonly InsertNewGuildHandler _insertNewGuildHandler;
+    private readonly GetConfigurationKeysHandler _getConfigurationKeysHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -13,6 +16,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getUserCallsignChangesHandler = new GetUserCallsignChangesHandler();
         _updateUserForceCodeHandler = new UpdateUserForceCodeHandler();
         _insertNewGuildHandler = new InsertNewGuildHandler();
+        _getConfigurationKeysHandler = new GetConfigurationKeysHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -85,6 +89,46 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             Console.WriteLine($"Error Code 4: {e.Message}");
             return new InsertNewGuildResponse();
+        }
+    }
+
+    public override async Task<GetConfigurationKeysResponse> GetConfigurationKeys(GetConfigurationKeysRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var keys = _getConfigurationKeysHandler.GetConfigurationKeys(request.GuildId);
+            var response = new GetConfigurationKeysResponse();
+
+            foreach (var key in keys)
+            {
+                Any value;
+                if (key.Value is string stringValue)
+                {
+                    value = Any.Pack(new StringValue { Value = stringValue });
+                }
+                else if (key.Value is long intValue)
+                {
+                    value = Any.Pack(new Int64Value { Value = intValue });
+                }
+                else if (key.Value is bool boolValue)
+                {
+                    value = Any.Pack(new BoolValue { Value = boolValue });
+                }
+                else if (key.Value == null)
+                {
+                    value = Any.Pack(new Empty());
+                } else {
+                    continue;
+                }
+
+                response.Keys.Add((string) key.Key, value);
+            }
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error Code 8: {e.Message}");
+            return new GetConfigurationKeysResponse();
         }
     }
 }

@@ -23,33 +23,44 @@ _sym_db = _symbol_database.Default()
 
 
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
+from google.protobuf import any_pb2 as google_dot_protobuf_dot_any__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16\x64\x61tabase_service.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"t\n\x17UserCallsignChangeEvent\x12-\n\ttimestamp\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x14\n\x0cold_callsign\x18\x02 \x01(\t\x12\x14\n\x0cnew_callsign\x18\x03 \x01(\t\"G\n\x1bUserCallsignChangesResponse\x12(\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x18.UserCallsignChangeEvent\"6\n\x1aUserCallsignChangesRequest\x12\x18\n\x10geofs_account_id\x18\x01 \x01(\x03\"J\n\x1aInsertUserDiscordIdRequest\x12\x18\n\x10geofs_account_id\x18\x01 \x01(\x03\x12\x12\n\ndiscord_id\x18\x02 \x01(\x03\".\n\x1bInsertUserDiscordIdResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"^\n\x1aUpdateUserForceCodeRequest\x12\x18\n\x10geofs_account_id\x18\x01 \x01(\x03\x12\x12\n\ndiscord_id\x18\x02 \x01(\x03\x12\x12\n\nforce_code\x18\x03 \x01(\t\".\n\x1bUpdateUserForceCodeResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\")\n\x15InsertNewGuildRequest\x12\x10\n\x08guild_id\x18\x01 \x01(\x03\")\n\x16InsertNewGuildResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xcd\x02\n\x0f\x44\x61tabaseService\x12S\n\x16GetUserCallsignChanges\x12\x1b.UserCallsignChangesRequest\x1a\x1c.UserCallsignChangesResponse\x12P\n\x13InsertUserDiscordId\x12\x1b.InsertUserDiscordIdRequest\x1a\x1c.InsertUserDiscordIdResponse\x12P\n\x13UpdateUserForceCode\x12\x1b.UpdateUserForceCodeRequest\x1a\x1c.UpdateUserForceCodeResponse\x12\x41\n\x0eInsertNewGuild\x12\x16.InsertNewGuildRequest\x1a\x17.InsertNewGuildResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16\x64\x61tabase_service.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x19google/protobuf/any.proto\"t\n\x17UserCallsignChangeEvent\x12-\n\ttimestamp\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x14\n\x0cold_callsign\x18\x02 \x01(\t\x12\x14\n\x0cnew_callsign\x18\x03 \x01(\t\"G\n\x1bUserCallsignChangesResponse\x12(\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x18.UserCallsignChangeEvent\"6\n\x1aUserCallsignChangesRequest\x12\x18\n\x10geofs_account_id\x18\x01 \x01(\x03\"J\n\x1aInsertUserDiscordIdRequest\x12\x18\n\x10geofs_account_id\x18\x01 \x01(\x03\x12\x12\n\ndiscord_id\x18\x02 \x01(\x03\".\n\x1bInsertUserDiscordIdResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"^\n\x1aUpdateUserForceCodeRequest\x12\x18\n\x10geofs_account_id\x18\x01 \x01(\x03\x12\x12\n\ndiscord_id\x18\x02 \x01(\x03\x12\x12\n\nforce_code\x18\x03 \x01(\t\".\n\x1bUpdateUserForceCodeResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\")\n\x15InsertNewGuildRequest\x12\x10\n\x08guild_id\x18\x01 \x01(\x03\")\n\x16InsertNewGuildResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"/\n\x1bGetConfigurationKeysRequest\x12\x10\n\x08guild_id\x18\x01 \x01(\x03\"\x8a\x01\n\x05Value\x12\x16\n\x0cstring_value\x18\x01 \x01(\tH\x00\x12\x13\n\tint_value\x18\x02 \x01(\x03H\x00\x12\x14\n\nbool_value\x18\x03 \x01(\x08H\x00\x12\x35\n\x0ftimestamp_value\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.TimestampH\x00\x42\x07\n\x05value\"\x98\x01\n\x1cGetConfigurationKeysResponse\x12\x35\n\x04keys\x18\x01 \x03(\x0b\x32\'.GetConfigurationKeysResponse.KeysEntry\x1a\x41\n\tKeysEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12#\n\x05value\x18\x02 \x01(\x0b\x32\x14.google.protobuf.Any:\x02\x38\x01\x32\xa2\x03\n\x0f\x44\x61tabaseService\x12S\n\x16GetUserCallsignChanges\x12\x1b.UserCallsignChangesRequest\x1a\x1c.UserCallsignChangesResponse\x12P\n\x13InsertUserDiscordId\x12\x1b.InsertUserDiscordIdRequest\x1a\x1c.InsertUserDiscordIdResponse\x12P\n\x13UpdateUserForceCode\x12\x1b.UpdateUserForceCodeRequest\x1a\x1c.UpdateUserForceCodeResponse\x12\x41\n\x0eInsertNewGuild\x12\x16.InsertNewGuildRequest\x1a\x17.InsertNewGuildResponse\x12S\n\x14GetConfigurationKeys\x12\x1c.GetConfigurationKeysRequest\x1a\x1d.GetConfigurationKeysResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'database_service_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_USERCALLSIGNCHANGEEVENT']._serialized_start=59
-  _globals['_USERCALLSIGNCHANGEEVENT']._serialized_end=175
-  _globals['_USERCALLSIGNCHANGESRESPONSE']._serialized_start=177
-  _globals['_USERCALLSIGNCHANGESRESPONSE']._serialized_end=248
-  _globals['_USERCALLSIGNCHANGESREQUEST']._serialized_start=250
-  _globals['_USERCALLSIGNCHANGESREQUEST']._serialized_end=304
-  _globals['_INSERTUSERDISCORDIDREQUEST']._serialized_start=306
-  _globals['_INSERTUSERDISCORDIDREQUEST']._serialized_end=380
-  _globals['_INSERTUSERDISCORDIDRESPONSE']._serialized_start=382
-  _globals['_INSERTUSERDISCORDIDRESPONSE']._serialized_end=428
-  _globals['_UPDATEUSERFORCECODEREQUEST']._serialized_start=430
-  _globals['_UPDATEUSERFORCECODEREQUEST']._serialized_end=524
-  _globals['_UPDATEUSERFORCECODERESPONSE']._serialized_start=526
-  _globals['_UPDATEUSERFORCECODERESPONSE']._serialized_end=572
-  _globals['_INSERTNEWGUILDREQUEST']._serialized_start=574
-  _globals['_INSERTNEWGUILDREQUEST']._serialized_end=615
-  _globals['_INSERTNEWGUILDRESPONSE']._serialized_start=617
-  _globals['_INSERTNEWGUILDRESPONSE']._serialized_end=658
-  _globals['_DATABASESERVICE']._serialized_start=661
-  _globals['_DATABASESERVICE']._serialized_end=994
+  _globals['_GETCONFIGURATIONKEYSRESPONSE_KEYSENTRY']._loaded_options = None
+  _globals['_GETCONFIGURATIONKEYSRESPONSE_KEYSENTRY']._serialized_options = b'8\001'
+  _globals['_USERCALLSIGNCHANGEEVENT']._serialized_start=86
+  _globals['_USERCALLSIGNCHANGEEVENT']._serialized_end=202
+  _globals['_USERCALLSIGNCHANGESRESPONSE']._serialized_start=204
+  _globals['_USERCALLSIGNCHANGESRESPONSE']._serialized_end=275
+  _globals['_USERCALLSIGNCHANGESREQUEST']._serialized_start=277
+  _globals['_USERCALLSIGNCHANGESREQUEST']._serialized_end=331
+  _globals['_INSERTUSERDISCORDIDREQUEST']._serialized_start=333
+  _globals['_INSERTUSERDISCORDIDREQUEST']._serialized_end=407
+  _globals['_INSERTUSERDISCORDIDRESPONSE']._serialized_start=409
+  _globals['_INSERTUSERDISCORDIDRESPONSE']._serialized_end=455
+  _globals['_UPDATEUSERFORCECODEREQUEST']._serialized_start=457
+  _globals['_UPDATEUSERFORCECODEREQUEST']._serialized_end=551
+  _globals['_UPDATEUSERFORCECODERESPONSE']._serialized_start=553
+  _globals['_UPDATEUSERFORCECODERESPONSE']._serialized_end=599
+  _globals['_INSERTNEWGUILDREQUEST']._serialized_start=601
+  _globals['_INSERTNEWGUILDREQUEST']._serialized_end=642
+  _globals['_INSERTNEWGUILDRESPONSE']._serialized_start=644
+  _globals['_INSERTNEWGUILDRESPONSE']._serialized_end=685
+  _globals['_GETCONFIGURATIONKEYSREQUEST']._serialized_start=687
+  _globals['_GETCONFIGURATIONKEYSREQUEST']._serialized_end=734
+  _globals['_VALUE']._serialized_start=737
+  _globals['_VALUE']._serialized_end=875
+  _globals['_GETCONFIGURATIONKEYSRESPONSE']._serialized_start=878
+  _globals['_GETCONFIGURATIONKEYSRESPONSE']._serialized_end=1030
+  _globals['_GETCONFIGURATIONKEYSRESPONSE_KEYSENTRY']._serialized_start=965
+  _globals['_GETCONFIGURATIONKEYSRESPONSE_KEYSENTRY']._serialized_end=1030
+  _globals['_DATABASESERVICE']._serialized_start=1033
+  _globals['_DATABASESERVICE']._serialized_end=1451
 # @@protoc_insertion_point(module_scope)

@@ -54,6 +54,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.InsertNewGuildRequest.SerializeToString,
                 response_deserializer=database__service__pb2.InsertNewGuildResponse.FromString,
                 _registered_method=True)
+        self.GetConfigurationKeys = channel.unary_unary(
+                '/DatabaseService/GetConfigurationKeys',
+                request_serializer=database__service__pb2.GetConfigurationKeysRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetConfigurationKeysResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -83,6 +88,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetConfigurationKeys(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -105,6 +116,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.InsertNewGuild,
                     request_deserializer=database__service__pb2.InsertNewGuildRequest.FromString,
                     response_serializer=database__service__pb2.InsertNewGuildResponse.SerializeToString,
+            ),
+            'GetConfigurationKeys': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetConfigurationKeys,
+                    request_deserializer=database__service__pb2.GetConfigurationKeysRequest.FromString,
+                    response_serializer=database__service__pb2.GetConfigurationKeysResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -215,6 +231,33 @@ class DatabaseService(object):
             '/DatabaseService/InsertNewGuild',
             database__service__pb2.InsertNewGuildRequest.SerializeToString,
             database__service__pb2.InsertNewGuildResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetConfigurationKeys(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetConfigurationKeys',
+            database__service__pb2.GetConfigurationKeysRequest.SerializeToString,
+            database__service__pb2.GetConfigurationKeysResponse.FromString,
             options,
             channel_credentials,
             insecure,
