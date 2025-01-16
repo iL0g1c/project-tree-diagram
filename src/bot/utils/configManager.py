@@ -1,41 +1,26 @@
 import os
-import json
+import grpc
+from proto import database_service_pb2_grpc
+from proto import database_service_pb2
+import utils.handleProtobufUnpacking as handleProtobufUnpacking
 
 class ConfigManager:
     def __init__(self):
-        config_path = os.path.join(os.path.dirname(__file__), "../../../data/config.json")
-        if not os.path.exists(config_path):
-            raise FileNotFoundError(f"Config file not found at {config_path}")
-        
-        with open(config_path) as f:
-            self.config = json.load(f)
+        self.host = "localhost:50051"
 
-    def save_config(self):
-        config_path = os.path.join(os.path.dirname(__file__), "../../../data/config.json")
-        with open(config_path, "w") as f:
-            json.dump(self.config, f)
+    def get_config(self, guild_id):
+        with grpc.insecure_channel(self.host) as channel:
+            stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
+            request = database_service_pb2.GetConfigurationKeysRequest(guild_id=guild_id)
+            keys = stub.GetConfigurationKeys(request)
 
-    def update_key(self, key, value):
-        if key in self.config:
-            self.config[key] = value
-            self.save_config()
-            return True, None
-        else:
-            return False, f"The config key you tried to change doesn't exist."
-        
+        keys = handleProtobufUnpacking.unpack(keys)
+        return keys
 
-    def create_key(self, key, value):
-        if key not in self.config:
-            self.config[key] = value
-            self.save_config()
-            return True, None
-        else:
-            return False, f"The config key you tried to create already exists."
-        
-    def destroy_key(self, key):
-        if key in self.config:
-            del self.config[key]
-            self.save_config()
-            return True, None
-        else:
-            return False, f"The config key you tried to delete doesn't exist."
+    def update_key(self, guild_id, key, value):
+        with grpc.insecure_channel(self.host) as channel:
+            stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
+            request = database_service_pb2.UpdateConfigurationKeysRequest(guild_id=guild_id, key=key, value=value)
+            response = stub.UpdateConfigurationKeys(request)
+        if response.success:
+            return True
