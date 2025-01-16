@@ -15,15 +15,30 @@ class Configuration(commands.Cog):
     config_group = app_commands.Group(name="config", description="Bot Configuration Commands")
 
     @config_group.command(name="set", description="Change the bot's configuration.")
-    async def config_change(self, interaction: discord.Interaction, key: str, value: str):
+    @app_commands.choices(
+        key=[
+            app_commands.Choice(name="Force Identifier", value="force_code"),
+            app_commands.Choice(name="Developer Role ID", value="developer_role_id"),
+            app_commands.Choice(name="High Command Role ID", value="high_command_role_id"),
+            app_commands.Choice(name="Member Role ID", value="member_role_id"),
+            app_commands.Choice(name="Player Activity Channel ID", value="player_activity_channel_id"),
+            app_commands.Choice(name="Patrol Log Channel ID", value="patrol_log_channel_id"),
+        ]
+    )
+    async def config_change(self, interaction: discord.Interaction, key: app_commands.Choice[str], value: str):
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.config)
         if user_role_check[0]:
             await interaction.response.defer()
-            success, error = self.bot.configManager.update_key(key, value)
-            if not success:
-                await interaction.followup.send(error)
+
+            with grpc.insecure_channel("localhost:50051") as channel:
+                stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
+                request = database_service_pb2.UpdateConfigurationKeysRequest(guild_id=int(interaction.guild.id), key=key.value, value=value)
+                response = stub.UpdateConfigurationKeys(request)
+
+            if not response.success:
+                await interaction.followup.send(f"Failed to update configuration key `{key.name}`.")
             else:
-                await interaction.followup.send(f"Configuration key `{key}` has been updated to `{value}`.")
+                await interaction.followup.send(f"Configuration key `{key.name}` has been updated to `{value}`.")
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")

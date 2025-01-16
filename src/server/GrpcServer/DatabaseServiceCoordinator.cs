@@ -1,6 +1,5 @@
 using Grpc.Core;
 using Google.Protobuf.WellKnownTypes;
-using Google.Protobuf;
 
 public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
 {
@@ -9,6 +8,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly UpdateUserForceCodeHandler _updateUserForceCodeHandler;
     private readonly InsertNewGuildHandler _insertNewGuildHandler;
     private readonly GetConfigurationKeysHandler _getConfigurationKeysHandler;
+    private readonly UpdateConfigurationKeysHandler _updateConfigurationKeysHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -17,6 +17,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _updateUserForceCodeHandler = new UpdateUserForceCodeHandler();
         _insertNewGuildHandler = new InsertNewGuildHandler();
         _getConfigurationKeysHandler = new GetConfigurationKeysHandler();
+        _updateConfigurationKeysHandler = new UpdateConfigurationKeysHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -129,6 +130,21 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             Console.WriteLine($"Error Code 8: {e.Message}");
             return new GetConfigurationKeysResponse();
+        }
+    }
+    public override async Task<UpdateConfigurationKeysResponse> UpdateConfigurationKeys(UpdateConfigurationKeysRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var isSuccessful = _updateConfigurationKeysHandler.UpdateConfigurationKeys(request.GuildId, request.Key, request.Value);
+            var response = new UpdateConfigurationKeysResponse();
+            response.Success = isSuccessful;
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error Code 7: {e.Message}");
+            return new UpdateConfigurationKeysResponse();
         }
     }
 }

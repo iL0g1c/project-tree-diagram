@@ -10,6 +10,7 @@ service DatabaseService {
     rpc UpdateUserForceCode (UpdateUserForceCodeRequest) returns (UpdateUserForceCodeResponse);
     rpc InsertNewGuild (InsertNewGuildRequest) returns (InsertNewGuildResponse);
     rpc GetConfigurationKeys (GetConfigurationKeysRequest) returns (GetConfigurationKeysResponse);
+    rpc UpdateConfigurationKeys (UpdateConfigurationKeysRequest) returns (UpdateConfigurationKeysResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -68,4 +69,14 @@ message Value {
 
 message GetConfigurationKeysResponse {
     map<string, google.protobuf.Any> keys = 1;
+}
+
+message UpdateConfigurationKeysRequest {
+    int64 guild_id = 1;
+    string key = 2;
+    string value = 3;
+}
+
+message UpdateConfigurationKeysResponse {
+    bool success = 1;
 }
