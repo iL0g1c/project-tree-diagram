@@ -39,7 +39,7 @@ message InsertUserDiscordIdResponse {
 message UpdateUserForceCodeRequest {
     int64 geofs_account_id = 1;
     int64 discord_id = 2;
-    string force_code = 3;
+    int64 guild_id = 3;
 }
 
 message UpdateUserForceCodeResponse {

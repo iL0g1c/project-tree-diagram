@@ -9,7 +9,7 @@ class UpdateUserForceCodeHandler
         connectionString = dbLayer.connectionString;
     }
 
-    public bool UpdateUserForceCode(Int64 geofs_account_id, Int64 discord_id, string force_code)
+    public bool UpdateUserForceCode(Int64 geofs_account_id, Int64 discord_id, Int64 guild_id)
     {
         try
         {
@@ -22,7 +22,7 @@ class UpdateUserForceCodeHandler
                 {
                     cmd.Parameters.AddWithValue("@geofs_account_id", geofs_account_id);
                     cmd.Parameters.AddWithValue("@discord_id", discord_id);
-                    cmd.Parameters.AddWithValue("@force_code", force_code);
+                    cmd.Parameters.AddWithValue("@guild_id", guild_id);
 
                     var result = cmd.ExecuteScalar();
 

@@ -65,7 +65,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _updateUserForceCodeHandler.UpdateUserForceCode(request.GeofsAccountId, request.DiscordId, request.ForceCode);
+            var isSuccessful = _updateUserForceCodeHandler.UpdateUserForceCode(request.GeofsAccountId, request.DiscordId, request.GuildId);
             var response = new UpdateUserForceCodeResponse();
             response.Success = isSuccessful;
             return response;

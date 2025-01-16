@@ -13,14 +13,13 @@ class Force(commands.Cog):
     force_group = app_commands.Group(name="force", description="Force management commands")
 
     @force_group.command(name="add-pilot", description="Register a pilot to your force.")
-    async def add_pilot(self, interaction: discord.Interaction, geofs_acount_id: int, pilot: discord.Member):
+    async def add_pilot(self, interaction: discord.Interaction, geofs_account_id: int, pilot: discord.Member):
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
             await interaction.response.defer()
-            force_code = "IDF" # Temporary force code
             with grpc.insecure_channel("localhost:50051") as channel:
                 stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
-                request = database_service_pb2.UpdateUserForceCodeRequest(geofs_account_id=int(geofs_acount_id), discord_id=int(pilot.id), force_code=str(force_code))
+                request = database_service_pb2.UpdateUserForceCodeRequest(geofs_account_id=int(geofs_account_id), discord_id=int(pilot.id), guild_id=int(interaction.guild.id))
                 response = stub.UpdateUserForceCode(request)
                 if response.success:
                     await interaction.followup.send(content="User added to your force successfully.")
