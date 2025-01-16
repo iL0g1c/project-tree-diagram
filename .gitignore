@@ -5,7 +5,7 @@ data/config.json
 **/obj/
 ./publish/*
 *.sln
-.env
+*.env
 **/bin/
 src/build/*
 *.egg
