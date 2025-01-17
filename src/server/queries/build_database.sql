@@ -33,5 +33,7 @@ CREATE TABLE Forces (
     member_role_id BIGINT,
     player_activity_channel_id BIGINT,
     patrol_log_channel_id BIGINT,
-    callsign_change_channel_id BIGINT
+    callsign_change_channel_id BIGINT,
+    callsign_code_channel_id BIGINT,
+    callsign_code_loop_enabled BOOLEAN,
 );

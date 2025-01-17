@@ -1,7 +1,9 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord.ext import tasks
 from discord.utils import escape_markdown
+import datetime
 from dotenv import load_dotenv
 import asyncio
 import os
@@ -10,13 +12,15 @@ import sys
 import grpc
 import threading
 from flask import Flask, request, jsonify
+import random
+import string
 
 from proto import database_service_pb2_grpc
 from proto import database_service_pb2
 from utils.configManager import ConfigManager
 
 load_dotenv()
-BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
+BOT_TOKEN = os.getenv('BOT_BETA_TOKEN')
 
 class TreeDiagram(commands.Bot):
     def __init__(self, botToken):
@@ -32,6 +36,7 @@ class TreeDiagram(commands.Bot):
 
     async def on_ready(self):
         self.logger.log(20, f'{self.user} has connected to Discord!')
+        await self.update_callsign_code.start()
 
     async def setup_hook(self) -> None:
         self.logger.log(20, "Starting up...")
@@ -54,7 +59,7 @@ class TreeDiagram(commands.Bot):
             await self.load_extension(f"commands.{extension}")
 
     async def on_guild_join(self, guild):
-        with grpc.insecure_channel("localhost:50051") as channel:
+        with grpc.insecure_channel(self.configManager.host) as channel:
             stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
             request = database_service_pb2.InsertNewGuildRequest(guild_id=int(guild.id))
             response = stub.InsertNewGuild(request)
@@ -62,6 +67,24 @@ class TreeDiagram(commands.Bot):
                 self.logger.log(20, f"Joined guild: {guild.name}")
             else:
                 self.logger.log(40, f"Failed guild setup: {guild.name}")
+    @tasks.loop(time=datetime.time(hour=0, minute=0, second=0))
+    async def update_callsign_code(self):
+        first_character = random.choice(string.ascii_uppercase)
+        second_character = random.randint(0, 9)
+        third_character = random.choice(string.ascii_uppercase)
+        callsign_code = first_character + str(second_character) + third_character
+        callsign_code_channels = self.configManager.get_all_of_key("callsign_code_channel_id")
+        callsign_code_loop_enabled = self.configManager.get_all_of_key("callsign_code_loop_enabled")
+        member_roles = self.configManager.get_all_of_key("member_role_id")
+        for key in callsign_code_channels:
+            if callsign_code_channels[key] and callsign_code_loop_enabled[key]:
+                channel = self.get_channel(int(callsign_code_channels[key]))
+                if channel:
+                    member_role = discord.utils.get(self.get_guild(int(key)).roles, id=int(member_roles[key]))
+                    await channel.send(f"# **__Daily code__**\n**Code: {callsign_code}**\n**Example:** `Tempest-#[140][{callsign_code}][IDF]`\n{member_role.mention}")
+
+        
+
 
 app = Flask(__name__)
 @app.route("/callsign-changes", methods=["POST"])

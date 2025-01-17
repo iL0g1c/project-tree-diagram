@@ -8,10 +8,12 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from datetime import datetime
 import utils.validateUser as validateUser
 import utils.paginationEmbed as paginationEmbed
+import utils.configManager as configManager
 
 class Intelligence(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.configManager = configManager.ConfigManager()
 
     intelligence_group = app_commands.Group(name="intelligence", description="GeoFS Intelligence Commands")
 
@@ -22,7 +24,7 @@ class Intelligence(commands.Cog):
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
             await interaction.response.defer()
-            with grpc.insecure_channel("localhost:50051") as channel:
+            with grpc.insecure_channel(self.configManager.host) as channel:
                 stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
                 request = database_service_pb2.InsertUserDiscordIdRequest(discord_id=int(discord_id), geofs_account_id=int(geofs_id))
                 response = stub.InsertUserDiscordId(request)
@@ -44,7 +46,7 @@ class Intelligence(commands.Cog):
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
             await interaction.response.defer()
-            with grpc.insecure_channel("localhost:50051") as channel:
+            with grpc.insecure_channel(self.configManager.host) as channel:
                 stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
                 request = database_service_pb2.UserCallsignChangesRequest(geofs_account_id=int(geofs_id))
                 response = stub.GetUserCallsignChanges(request)

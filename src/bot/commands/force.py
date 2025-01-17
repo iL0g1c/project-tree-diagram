@@ -5,10 +5,12 @@ import utils.validateUser as validateUser
 import grpc
 from proto import database_service_pb2_grpc
 from proto import database_service_pb2
+import utils.configManager as configManager
 
 class Force(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.configManager = configManager.ConfigManager()
 
     force_group = app_commands.Group(name="force", description="Force management commands")
 
@@ -17,7 +19,7 @@ class Force(commands.Cog):
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
             await interaction.response.defer()
-            with grpc.insecure_channel("localhost:50051") as channel:
+            with grpc.insecure_channel(self.configManager.host) as channel:
                 stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
                 request = database_service_pb2.UpdateUserForceCodeRequest(geofs_account_id=int(geofs_account_id), discord_id=int(pilot.id), guild_id=int(interaction.guild.id))
                 response = stub.UpdateUserForceCode(request)
