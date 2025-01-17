@@ -27,10 +27,7 @@ class PaginatedEmbed(View):
         for i, item in enumerate(items_on_page, start=start_index + 1):
             self.embed.add_field(name="", value=item, inline=False)
 
-        self.embed.set_footer(
-            text=f"Made by S.H.I.E.L.D. Research & Development. (Page {self.page + 1} of {len(self.items) // self.items_per_page + 1})",
-            icon_url="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/9/9b/S.H.I.E.L.D._logo_NEW.png/revision/latest?cb=20190422151215"
-        )
+        self.embed.set_footer(text=f"Page {self.page + 1} of {len(self.items) // self.items_per_page + 1}")
 
 
     def update_buttons(self):

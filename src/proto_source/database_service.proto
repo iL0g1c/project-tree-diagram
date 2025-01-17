@@ -1,10 +1,17 @@
 syntax = "proto3";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
 
 
 service DatabaseService {
     rpc GetUserCallsignChanges (UserCallsignChangesRequest) returns (UserCallsignChangesResponse);
     rpc InsertUserDiscordId (InsertUserDiscordIdRequest) returns (InsertUserDiscordIdResponse);
+    rpc UpdateUserForceCode (UpdateUserForceCodeRequest) returns (UpdateUserForceCodeResponse);
+    rpc InsertNewGuild (InsertNewGuildRequest) returns (InsertNewGuildResponse);
+    rpc GetConfigurationKeys (GetConfigurationKeysRequest) returns (GetConfigurationKeysResponse);
+    rpc UpdateConfigurationKeys (UpdateConfigurationKeysRequest) returns (UpdateConfigurationKeysResponse);
+    rpc GetAllOfKey (GetAllOfKeyRequest) returns (GetAllOfKeyResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -28,4 +35,57 @@ message InsertUserDiscordIdRequest {
 
 message InsertUserDiscordIdResponse {
     bool success = 1;
+}
+
+message UpdateUserForceCodeRequest {
+    int64 geofs_account_id = 1;
+    int64 discord_id = 2;
+    int64 guild_id = 3;
+}
+
+message UpdateUserForceCodeResponse {
+    bool success = 1;
+}
+
+message InsertNewGuildRequest {
+    int64 guild_id = 1;
+}
+
+message InsertNewGuildResponse {
+    bool success = 1;
+}
+
+message GetConfigurationKeysRequest {
+    int64 guild_id = 1;
+}
+
+message Value {
+    oneof value {
+        string string_value = 1;
+        int64 int_value = 2;
+        bool bool_value = 3;
+        google.protobuf.Timestamp timestamp_value = 4;
+    }
+}
+
+message GetConfigurationKeysResponse {
+    map<string, google.protobuf.Any> keys = 1;
+}
+
+message UpdateConfigurationKeysRequest {
+    int64 guild_id = 1;
+    string key = 2;
+    string value = 3;
+}
+
+message UpdateConfigurationKeysResponse {
+    bool success = 1;
+}
+
+message GetAllOfKeyRequest {
+    string key = 1;
+}
+
+message GetAllOfKeyResponse {
+    map<int64, google.protobuf.Any> keys = 1;
 }

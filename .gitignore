@@ -1,9 +1,11 @@
-venv/*
+src/venv/*
 __pycache__
 src/bot/project_tree_diagram*
 data/config.json
 **/obj/
+./publish/*
 *.sln
-*.csproj
-.env
+*.env
 **/bin/
+src/build/*
+*.egg

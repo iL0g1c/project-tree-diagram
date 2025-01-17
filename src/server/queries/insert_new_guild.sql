@@ -1,0 +1,2 @@
+INSERT INTO Forces (guild_id, force_code, developer_role_id, high_command_role_id, member_role_id, player_activity_channel_id, patrol_log_channel_id)
+VALUES (@guild_id, null, null, null, null, null, null)

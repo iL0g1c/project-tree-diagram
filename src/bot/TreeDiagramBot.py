@@ -1,17 +1,26 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord.utils import escape_markdown
 from dotenv import load_dotenv
+import asyncio
 import os
 import logging
 import sys
+import grpc
+import threading
+from flask import Flask, request, jsonify
+
+from proto import database_service_pb2_grpc
+from proto import database_service_pb2
 from utils.configManager import ConfigManager
 
 load_dotenv()
-BOT_TOKEN = os.getenv('BOT_BETA_TOKEN')
+BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
 
 class TreeDiagram(commands.Bot):
     def __init__(self, botToken):
+        self.configManager = ConfigManager()
         # setting up logger
         self.logger = logging.getLogger("TreeDiagram")
         self.logger.setLevel(logging.DEBUG)
@@ -41,15 +50,57 @@ class TreeDiagram(commands.Bot):
 
 
     async def _load_cogs(self) -> None:
-        for extension in ("patrolling", "configuration", "intelligence"):
+        for extension in ("configuration", "force", "intelligence", "patrolling"):
             await self.load_extension(f"commands.{extension}")
 
+    async def on_guild_join(self, guild):
+        with grpc.insecure_channel("localhost:50051") as channel:
+            stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
+            request = database_service_pb2.InsertNewGuildRequest(guild_id=int(guild.id))
+            response = stub.InsertNewGuild(request)
+            if response.success:
+                self.logger.log(20, f"Joined guild: {guild.name}")
+            else:
+                self.logger.log(40, f"Failed guild setup: {guild.name}")
+
+app = Flask(__name__)
+@app.route("/callsign-changes", methods=["POST"])
+def callsign_changes():
+    data = request.json
+    description = ""
+    for user in data:
+        account_id = user["acid"]
+        old_callsign = user["old_callsign"]
+        new_callsign = user["new_callsign"]
+        description += escape_markdown(f"Account ID: {account_id} | Old Callsign: {old_callsign} | New Callsign: {new_callsign}\n")
+        
+    embed = discord.Embed(
+        title="Callsign Changes",
+        description=description,
+        color=discord.Color.blurple()
+    )
+    keys = bot.configManager.get_all_of_key("callsign_change_channel_id")
+    for key in keys:
+        if keys[key]:
+            channel = bot.get_channel(int(keys[key]))
+            if channel:
+                asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
+    return jsonify({"success": "ok"}), 200
+
+def run_flask():
+    app.run(host='0.0.0.0', port=5001, debug=False)
+
+
 def main():
+    global bot
     bot = TreeDiagram(BOT_TOKEN)
-    bot.configManager = ConfigManager()
     @bot.tree.command(name="ping", description="Get the bot's latency.")
     async def ping(interaction: discord.Interaction):
         await interaction.response.send_message("# Pong! :ping_pong:\nLatency: " + str(bot.latency*1000) + "ms")
+
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
+
     bot.run(BOT_TOKEN)
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ import warnings
 
 from proto import database_service_pb2 as database__service__pb2
 
-GRPC_GENERATED_VERSION = '1.68.1'
+GRPC_GENERATED_VERSION = '1.69.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -44,6 +44,31 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.InsertUserDiscordIdRequest.SerializeToString,
                 response_deserializer=database__service__pb2.InsertUserDiscordIdResponse.FromString,
                 _registered_method=True)
+        self.UpdateUserForceCode = channel.unary_unary(
+                '/DatabaseService/UpdateUserForceCode',
+                request_serializer=database__service__pb2.UpdateUserForceCodeRequest.SerializeToString,
+                response_deserializer=database__service__pb2.UpdateUserForceCodeResponse.FromString,
+                _registered_method=True)
+        self.InsertNewGuild = channel.unary_unary(
+                '/DatabaseService/InsertNewGuild',
+                request_serializer=database__service__pb2.InsertNewGuildRequest.SerializeToString,
+                response_deserializer=database__service__pb2.InsertNewGuildResponse.FromString,
+                _registered_method=True)
+        self.GetConfigurationKeys = channel.unary_unary(
+                '/DatabaseService/GetConfigurationKeys',
+                request_serializer=database__service__pb2.GetConfigurationKeysRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetConfigurationKeysResponse.FromString,
+                _registered_method=True)
+        self.UpdateConfigurationKeys = channel.unary_unary(
+                '/DatabaseService/UpdateConfigurationKeys',
+                request_serializer=database__service__pb2.UpdateConfigurationKeysRequest.SerializeToString,
+                response_deserializer=database__service__pb2.UpdateConfigurationKeysResponse.FromString,
+                _registered_method=True)
+        self.GetAllOfKey = channel.unary_unary(
+                '/DatabaseService/GetAllOfKey',
+                request_serializer=database__service__pb2.GetAllOfKeyRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetAllOfKeyResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -61,6 +86,36 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdateUserForceCode(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InsertNewGuild(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetConfigurationKeys(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateConfigurationKeys(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllOfKey(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -73,6 +128,31 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.InsertUserDiscordId,
                     request_deserializer=database__service__pb2.InsertUserDiscordIdRequest.FromString,
                     response_serializer=database__service__pb2.InsertUserDiscordIdResponse.SerializeToString,
+            ),
+            'UpdateUserForceCode': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateUserForceCode,
+                    request_deserializer=database__service__pb2.UpdateUserForceCodeRequest.FromString,
+                    response_serializer=database__service__pb2.UpdateUserForceCodeResponse.SerializeToString,
+            ),
+            'InsertNewGuild': grpc.unary_unary_rpc_method_handler(
+                    servicer.InsertNewGuild,
+                    request_deserializer=database__service__pb2.InsertNewGuildRequest.FromString,
+                    response_serializer=database__service__pb2.InsertNewGuildResponse.SerializeToString,
+            ),
+            'GetConfigurationKeys': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetConfigurationKeys,
+                    request_deserializer=database__service__pb2.GetConfigurationKeysRequest.FromString,
+                    response_serializer=database__service__pb2.GetConfigurationKeysResponse.SerializeToString,
+            ),
+            'UpdateConfigurationKeys': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateConfigurationKeys,
+                    request_deserializer=database__service__pb2.UpdateConfigurationKeysRequest.FromString,
+                    response_serializer=database__service__pb2.UpdateConfigurationKeysResponse.SerializeToString,
+            ),
+            'GetAllOfKey': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllOfKey,
+                    request_deserializer=database__service__pb2.GetAllOfKeyRequest.FromString,
+                    response_serializer=database__service__pb2.GetAllOfKeyResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -129,6 +209,141 @@ class DatabaseService(object):
             '/DatabaseService/InsertUserDiscordId',
             database__service__pb2.InsertUserDiscordIdRequest.SerializeToString,
             database__service__pb2.InsertUserDiscordIdResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateUserForceCode(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/UpdateUserForceCode',
+            database__service__pb2.UpdateUserForceCodeRequest.SerializeToString,
+            database__service__pb2.UpdateUserForceCodeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def InsertNewGuild(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/InsertNewGuild',
+            database__service__pb2.InsertNewGuildRequest.SerializeToString,
+            database__service__pb2.InsertNewGuildResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetConfigurationKeys(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetConfigurationKeys',
+            database__service__pb2.GetConfigurationKeysRequest.SerializeToString,
+            database__service__pb2.GetConfigurationKeysResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateConfigurationKeys(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/UpdateConfigurationKeys',
+            database__service__pb2.UpdateConfigurationKeysRequest.SerializeToString,
+            database__service__pb2.UpdateConfigurationKeysResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllOfKey(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetAllOfKey',
+            database__service__pb2.GetAllOfKeyRequest.SerializeToString,
+            database__service__pb2.GetAllOfKeyResponse.FromString,
             options,
             channel_credentials,
             insecure,

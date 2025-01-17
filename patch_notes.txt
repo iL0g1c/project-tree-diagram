@@ -1,0 +1,7 @@
+0.1.0-beta
+=============================
+Full integration into external server.
+Tons of backend code
+Detects callsigns and records them in the servers specified channel
+records users going offline and offline
+multi force support

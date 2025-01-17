@@ -1,0 +1,15 @@
+{
+  "apps": [
+    {
+      "name": "Tree-Diagram-Bot",
+      "script": "../venv/bin/python3",
+      "args": "TreeDiagramBot.py",
+      "autorestart": false,
+      "watch": false,
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  ]
+}
+

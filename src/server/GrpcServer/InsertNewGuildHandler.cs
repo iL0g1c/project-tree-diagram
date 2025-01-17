@@ -1,33 +1,30 @@
-using System.Numerics;
 using Npgsql;
 
-class InsertUserDiscordIdHandler
+class InsertNewGuildHandler
 {
     public readonly string connectionString;
-
-    public InsertUserDiscordIdHandler()
+    public InsertNewGuildHandler()
     {
         var dbLayer = new DatabaseLayer();
         connectionString = dbLayer.connectionString;
     }
 
-    public bool InsertUserDiscordId(Int64 geofs_account_id, Int64 discord_id)
+    public bool InsertNewGuild(Int64 guild_id)
     {
         try
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                string query = File.ReadAllText("queries/insert_user_discord_id.sql");
+                string query = File.ReadAllText("queries/insert_new_guild.sql");
 
                 using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@geofs_account_id", geofs_account_id);
-                    cmd.Parameters.AddWithValue("@discord_id", discord_id);
+                    cmd.Parameters.AddWithValue("@guild_id", guild_id);
                     cmd.ExecuteNonQuery();
                 }
+                return true;
             }
-            return true;
         }
         catch (Exception e)
         {

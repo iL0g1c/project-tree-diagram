@@ -2,7 +2,8 @@ CREATE TABLE Account (
     geofs_account_id BIGINT PRIMARY KEY,
     discord_id BIGINT,
     is_online BOOLEAN,
-    callsign VARCHAR(50)
+    callsign VARCHAR(50),
+    force_code VARCHAR(10)
 );
 
 CREATE TABLE callsign_change (
@@ -13,4 +14,24 @@ CREATE TABLE callsign_change (
     detected_at TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
     REFERENCES Account (geofs_account_id)
+);
+
+CREATE TABLE online_status_change (
+    event_id BIGINT PRIMARY KEY DEFAULT nextval('event_id'),
+    geofs_account_id BIGINT NOT NULL,
+    detected_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    is_online BOOLEAN NOT NULL,
+    CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
+    REFERENCES Account (geofs_account_id)
+);
+
+CREATE TABLE Forces (
+    guild_id BIGINT PRIMARY KEY,
+    force_code VARCHAR(10),
+    developer_role_id BIGINT,
+    high_command_role_id BIGINT,
+    member_role_id BIGINT,
+    player_activity_channel_id BIGINT,
+    patrol_log_channel_id BIGINT,
+    callsign_change_channel_id BIGINT
 );
