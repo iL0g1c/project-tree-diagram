@@ -20,7 +20,7 @@ from proto import database_service_pb2
 from utils.configManager import ConfigManager
 
 load_dotenv()
-BOT_TOKEN = os.getenv('BOT_BETA_TOKEN')
+BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
 
 class TreeDiagram(commands.Bot):
     def __init__(self, botToken):
