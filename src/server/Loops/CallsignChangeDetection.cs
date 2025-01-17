@@ -188,7 +188,7 @@ class CallsignChangeDetection
                     string json = JsonSerializer.Serialize(data);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    var response = await httpClient.PostAsync("http://localhost:5000/callsign-changes", content);
+                    var response = await httpClient.PostAsync("http://localhost:5001/callsign-changes", content);
                     if (!response.IsSuccessStatusCode)
                     {
                         Console.WriteLine($"Failed to send callsign changes to Discord bot: {response.StatusCode}");

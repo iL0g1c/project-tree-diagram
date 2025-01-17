@@ -88,7 +88,7 @@ def callsign_changes():
     return jsonify({"success": "ok"}), 200
 
 def run_flask():
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5001, debug=False)
 
 
 def main():
