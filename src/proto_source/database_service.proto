@@ -11,6 +11,7 @@ service DatabaseService {
     rpc InsertNewGuild (InsertNewGuildRequest) returns (InsertNewGuildResponse);
     rpc GetConfigurationKeys (GetConfigurationKeysRequest) returns (GetConfigurationKeysResponse);
     rpc UpdateConfigurationKeys (UpdateConfigurationKeysRequest) returns (UpdateConfigurationKeysResponse);
+    rpc GetAllOfKey (GetAllOfKeyRequest) returns (GetAllOfKeyResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -79,4 +80,12 @@ message UpdateConfigurationKeysRequest {
 
 message UpdateConfigurationKeysResponse {
     bool success = 1;
+}
+
+message GetAllOfKeyRequest {
+    string key = 1;
+}
+
+message GetAllOfKeyResponse {
+    map<int64, google.protobuf.Any> keys = 1;
 }

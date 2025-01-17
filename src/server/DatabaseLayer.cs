@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using dotenv.net;
 
 public class DatabaseLayer
@@ -21,10 +22,10 @@ public class DatabaseLayer
         pilotActivityLogger = new PilotActivityLogger(connectionString);
     }
 
-    public void ExecuteEventLoop(List<MapApiProcessor.User> users)
+    public async Task ExecuteEventLoop(List<MapApiProcessor.User> users)
     {
         Debug.WriteLine("Executing event loop");
-        callsignChangeDetection.ExecuteProcess(users);
+        await callsignChangeDetection.ExecuteProcess(users);
         pilotActivityLogger.ExecuteProcess(users);
     }
 }

@@ -24,3 +24,11 @@ class ConfigManager:
             response = stub.UpdateConfigurationKeys(request)
         if response.success:
             return True
+        
+    def get_all_of_key(self, key_name):
+        with grpc.insecure_channel(self.host) as channel:
+            stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
+            request = database_service_pb2.GetAllOfKeyRequest(key=key_name)
+            keys = stub.GetAllOfKey(request)
+        keys = handleProtobufUnpacking.unpack(keys)
+        return keys

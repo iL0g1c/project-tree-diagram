@@ -22,10 +22,14 @@ class Configuration(commands.Cog):
             app_commands.Choice(name="Member Role ID", value="member_role_id"),
             app_commands.Choice(name="Player Activity Channel ID", value="player_activity_channel_id"),
             app_commands.Choice(name="Patrol Log Channel ID", value="patrol_log_channel_id"),
+            app_commands.Choice(name="Callsign Change Channel ID", value="callsign_change_channel_id"),
         ]
     )
     async def config_change(self, interaction: discord.Interaction, key: app_commands.Choice[str], value: str):
-        user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
+        if key.value == "developer_role_id":
+            user_role_check = validateUser.validateUser(interaction.user, 1, self.bot.configManager.get_config(int(interaction.guild.id)), is_config_change=True)
+        else:
+            user_role_check = validateUser.validateUser(interaction.user, 2, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
             await interaction.response.defer()
             success = self.configManager.update_key(interaction.guild.id, key.value, value)
