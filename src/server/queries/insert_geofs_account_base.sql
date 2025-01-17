@@ -3,7 +3,5 @@ VALUES
 --MULTI-ROW-PLACEHOLDER
 ON CONFLICT (geofs_account_id)
 DO UPDATE
-SET callsign = EXCLUDED.callsign,
-    is_online = TRUE
-WHERE Account.is_online = FALSE
-      OR Account.callsign <> EXCLUDED.callsign;
+    SET callsign = EXCLUDED.callsign
+    WHERE Account.callsign <> EXCLUDED.callsign;

@@ -22,6 +22,7 @@ class PilotActivityLogger
             {
                 command.Parameters.AddWithValue("@account_ids", NpgsqlTypes.NpgsqlDbType.Array | NpgsqlTypes.NpgsqlDbType.Bigint, account_ids.ToArray());
                 int rowsAffected = command.ExecuteNonQuery();
+                Console.WriteLine($"Detected {rowsAffected} users going online.");
             }
         }
         sql = File.ReadAllText("queries/update_offline_users.sql");
@@ -32,6 +33,7 @@ class PilotActivityLogger
             {
                 command.Parameters.AddWithValue("@account_ids", NpgsqlTypes.NpgsqlDbType.Array | NpgsqlTypes.NpgsqlDbType.Bigint, account_ids.ToArray());
                 int rowsAffected = command.ExecuteNonQuery();
+                Console.WriteLine($"Detected {rowsAffected} users going offline.");
             }
         }
 
