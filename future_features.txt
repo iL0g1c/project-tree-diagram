@@ -1,2 +1,0 @@
-multi-force support
-- only allow display of a pilots discord id for the forces they are in.
