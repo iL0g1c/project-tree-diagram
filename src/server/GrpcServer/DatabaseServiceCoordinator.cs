@@ -10,6 +10,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetConfigurationKeysHandler _getConfigurationKeysHandler;
     private readonly UpdateConfigurationKeysHandler _updateConfigurationKeysHandler;
     private readonly GetAllOfKeyHandler _getAllOfKeyHandler;
+    private readonly GetForceUsersHandler _getForceUsersHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -20,6 +21,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getConfigurationKeysHandler = new GetConfigurationKeysHandler();
         _updateConfigurationKeysHandler = new UpdateConfigurationKeysHandler();
         _getAllOfKeyHandler = new GetAllOfKeyHandler();
+        _getForceUsersHandler = new GetForceUsersHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -149,7 +151,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             return new UpdateConfigurationKeysResponse();
         }
     }
-    public  override async Task<GetAllOfKeyResponse> GetAllOfKey(GetAllOfKeyRequest request, ServerCallContext context)
+    public override async Task<GetAllOfKeyResponse> GetAllOfKey(GetAllOfKeyRequest request, ServerCallContext context)
     {
         try
         {
@@ -186,6 +188,30 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             Console.WriteLine($"Error Code 18: {e.Message}");
             return new GetAllOfKeyResponse();
+        }
+    }
+
+    public override async Task<GetForceUsersResponse> GetForceUsers(GetForceUsersRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var users = _getForceUsersHandler.GetForceUsers(request.GuildId);
+            var response = new GetForceUsersResponse();
+            foreach (var user in users)
+            {
+                response.Users.Add(new UserDict
+                {
+                    DiscordId = user.Item1,
+                    GeofsAccountId = user.Item2
+                });
+            }
+            
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error Code 25: {e.Message}");
+            return new GetForceUsersResponse();
         }
     }
 }

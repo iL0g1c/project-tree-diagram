@@ -1,7 +1,7 @@
 0.2.1-beta
 =============================
-renamed the intelligence add-id command to intelligence add-discord-id
-renamed force add-pilot to "force register-pilot"
-removed unneeded patrol commands
+[X] renamed the intelligence add-id command to intelligence add-discord-id
+[X] renamed force add-pilot to "force register-pilot"
+[X] removed unneeded patrol commands
 add command "force list-pilots" to list all pilots in your force.
-Sends online and offline messages when callsign matches format.
+[X] Sends online and offline messages when callsign matches format.
