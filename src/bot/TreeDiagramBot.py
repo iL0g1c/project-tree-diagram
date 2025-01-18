@@ -121,9 +121,9 @@ def player_activity_change():
         for user in data:
             if user["force_code"] == guild_force_codes[force]:
                 if user["is_online"]:
-                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just came online!\n")
+                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just came online to start their patrol!\n")
                 else:
-                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just went offline!\n")
+                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just went offline to end their patrol!\n")
         embed = discord.Embed(
             title="Pilot Activity Updates",
             description=description,

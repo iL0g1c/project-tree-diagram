@@ -69,6 +69,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.GetAllOfKeyRequest.SerializeToString,
                 response_deserializer=database__service__pb2.GetAllOfKeyResponse.FromString,
                 _registered_method=True)
+        self.GetForceUsers = channel.unary_unary(
+                '/DatabaseService/GetForceUsers',
+                request_serializer=database__service__pb2.GetForceUsersRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetForceUsersResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -116,6 +121,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetForceUsers(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -153,6 +164,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.GetAllOfKey,
                     request_deserializer=database__service__pb2.GetAllOfKeyRequest.FromString,
                     response_serializer=database__service__pb2.GetAllOfKeyResponse.SerializeToString,
+            ),
+            'GetForceUsers': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetForceUsers,
+                    request_deserializer=database__service__pb2.GetForceUsersRequest.FromString,
+                    response_serializer=database__service__pb2.GetForceUsersResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -344,6 +360,33 @@ class DatabaseService(object):
             '/DatabaseService/GetAllOfKey',
             database__service__pb2.GetAllOfKeyRequest.SerializeToString,
             database__service__pb2.GetAllOfKeyResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetForceUsers(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetForceUsers',
+            database__service__pb2.GetForceUsersRequest.SerializeToString,
+            database__service__pb2.GetForceUsersResponse.FromString,
             options,
             channel_credentials,
             insecure,
