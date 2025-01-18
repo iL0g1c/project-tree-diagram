@@ -1,6 +1,7 @@
 using Npgsql;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 class PilotActivityLogger
 {
@@ -13,6 +14,8 @@ class PilotActivityLogger
     {
         List<long> account_ids = users.Select(user => (long)user.acid).ToList();
         var result_list = new List<Dictionary<string, object?>>();
+        var valid_users = new List<Dictionary<string, object?>>();
+
         string sql = "";
         // ===============================================================
         // 1) Update users going online
@@ -36,6 +39,9 @@ class PilotActivityLogger
 
                             Int64? discord_id = reader.IsDBNull(reader.GetOrdinal("discord_id")) ? null : (Int64?)reader.GetInt64(reader.GetOrdinal("discord_id"));
                             row_dictionary.Add("discord_id", discord_id);
+
+                            string callsign = reader.GetString(reader.GetOrdinal("callsign"));
+                            row_dictionary.Add("callsign", callsign);
 
                             string? force_code = reader.IsDBNull(reader.GetOrdinal("force_code")) ? null : reader.GetString(reader.GetOrdinal("force_code"));
                             row_dictionary.Add("force_code", force_code);
@@ -79,6 +85,9 @@ class PilotActivityLogger
                             Int64? discord_id = reader.IsDBNull(reader.GetOrdinal("discord_id")) ? null : (Int64?)reader.GetInt64(reader.GetOrdinal("discord_id"));
                             row_dictionary.Add("discord_id", discord_id);
 
+                            string callsign = reader.GetString(reader.GetOrdinal("callsign"));
+                            row_dictionary.Add("callsign", callsign);
+
                             string? force_code = reader.IsDBNull(reader.GetOrdinal("force_code")) ? null : reader.GetString(reader.GetOrdinal("force_code"));
                             row_dictionary.Add("force_code", force_code);
 
@@ -97,12 +106,67 @@ class PilotActivityLogger
             Console.WriteLine($"Error Code: 22 | Failed to update users going offline: {ex.Message}");
             return;
         }
-
         // ===============================================================
-        // 3) Send activity updates to discord bot
+        // 3) Package data for discord bot
         // ===============================================================
         try {
-            if (result_list.Count > 0)
+            Dictionary<Int64, object> callsign_formats = new Dictionary<Int64, object>();
+            using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+                string query_template = File.ReadAllText("queries/get_all_of_key.sql");
+                string query = query_template.Replace("@key", "callsign_format");
+
+                using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
+                {
+                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Int64 id = reader.GetInt64(0);
+                            string? username = reader.IsDBNull(1) ? null : reader.GetString(1);
+                            if (username == null)
+                            {
+                                continue;
+                            }
+                            callsign_formats.Add(id, username);
+                        }
+                    }
+                }
+            }
+            foreach (var user in result_list)
+            {
+                if (user["force_code"] == null)
+                {
+                    continue;
+                }
+                foreach (Int64 guild_id in callsign_formats.Keys.ToList())
+                {
+                    string? callsign_format = callsign_formats[guild_id].ToString();
+                    if (callsign_format == null || user["callsign"] == null)
+                    {
+                        continue;
+                    }
+                    string regex_pattern = callsign_format.Replace("[", "\\[").Replace("]", "\\]").Replace("X", ".");
+                    Regex regex = new Regex(".*" + regex_pattern + ".*", RegexOptions.IgnoreCase);
+                    if (regex.IsMatch(user["callsign"].ToString()))
+                    {
+                        valid_users.Add(user);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error Code: 23 | Failed to package data for Discord bot: {ex.Message}");
+            return;
+        }
+
+        // ===============================================================
+        // 4) Send activity updates to discord bot
+        // ===============================================================
+        try {
+            if (valid_users.Count > 0)
             {
                 var httpClient = new HttpClient();
                 string json = JsonSerializer.Serialize(result_list);

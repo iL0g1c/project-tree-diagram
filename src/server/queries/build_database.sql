@@ -6,6 +6,8 @@ CREATE TABLE Account (
     force_code VARCHAR(10)
 );
 
+CREATE SEQUENCE event_id START WITH 1 INCREMENT BY 1;
+
 CREATE TABLE callsign_change (
     event_id BIGINT PRIMARY KEY DEFAULT nextval('event_id'),
     geofs_account_id BIGINT NOT NULL,
@@ -36,4 +38,5 @@ CREATE TABLE Forces (
     callsign_change_channel_id BIGINT,
     callsign_code_channel_id BIGINT,
     callsign_code_loop_enabled BOOLEAN,
+    callsign_format VARCHAR(50),
 );

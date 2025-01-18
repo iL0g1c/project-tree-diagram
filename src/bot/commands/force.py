@@ -14,7 +14,7 @@ class Force(commands.Cog):
 
     force_group = app_commands.Group(name="force", description="Force management commands")
 
-    @force_group.command(name="add-pilot", description="Register a pilot to your force.")
+    @force_group.command(name="register-pilot", description="Register a pilot to your force.")
     async def add_pilot(self, interaction: discord.Interaction, geofs_account_id: int, pilot: discord.Member):
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
