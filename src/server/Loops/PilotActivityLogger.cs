@@ -11,17 +11,16 @@ class PilotActivityLogger
     }
     public async Task ExecuteProcess(List<MapApiProcessor.User> users)
     {
-        NpgsqlConnection connection = null!;
+        List<long> account_ids = users.Select(user => (long)user.acid).ToList();
+        var result_list = new List<Dictionary<string, object?>>();
+        string sql = "";
+        // ===============================================================
+        // 1) Update users going online
+        // ===============================================================
         try {
-            List<long> account_ids = users.Select(user => (long)user.acid).ToList();
-            var result_list = new List<Dictionary<string, object?>>();
-            string sql = "";
-            // ===============================================================
-            // 1) Update users going online
-            // ===============================================================
-            try {
-                sql = File.ReadAllText("queries/update_online_users.sql");
-                connection = new NpgsqlConnection(_connectionString);
+            sql = File.ReadAllText("queries/update_online_users.sql");
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
                 await connection.OpenAsync();
                 using (var command = new NpgsqlCommand(sql, connection))
                 {
@@ -50,18 +49,20 @@ class PilotActivityLogger
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error Code: 21 | Failed to update users going online: {ex.Message}");
-                return;
-            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error Code: 21 | Failed to update users going online: {ex.Message}");
+            return;
+        }
 
-            // ===============================================================
-            // 2) Update users going offline
-            // ===============================================================
-            try {
-                sql = File.ReadAllText("queries/update_offline_users.sql");
-                connection = new NpgsqlConnection(_connectionString);
+        // ===============================================================
+        // 2) Update users going offline
+        // ===============================================================
+        try {
+            sql = File.ReadAllText("queries/update_offline_users.sql");
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
                 await connection.OpenAsync();
                 using (var command = new NpgsqlCommand(sql, connection))
                 {
@@ -90,38 +91,34 @@ class PilotActivityLogger
                     }
                 }
             }
-            catch (Exception ex)
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error Code: 22 | Failed to update users going offline: {ex.Message}");
+            return;
+        }
+
+        // ===============================================================
+        // 3) Send activity updates to discord bot
+        // ===============================================================
+        try {
+            if (result_list.Count > 0)
             {
-                Console.WriteLine($"Error Code: 22 | Failed to update users going offline: {ex.Message}");
-                return;
-            }
+                var httpClient = new HttpClient();
+                string json = JsonSerializer.Serialize(result_list);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            // ===============================================================
-            // 3) Send activity updates to discord bot
-            // ===============================================================
-            try {
-                if (result_list.Count > 0)
+                var response = await httpClient.PostAsync("http://localhost:5001/player-activity-change", content);
+                if (!response.IsSuccessStatusCode)
                 {
-                    var httpClient = new HttpClient();
-                    string json = JsonSerializer.Serialize(result_list);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                    var response = await httpClient.PostAsync("http://localhost:5001/player-activity-change", content);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine($"Error Code: 19 | Failed to send activity updates to Discord bot: {response.StatusCode}");
-                    }
+                    Console.WriteLine($"Error Code: 19 | Failed to send activity updates to Discord bot: {response.StatusCode}");
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error Code: 20 | Failed to send activity updates to Discord bot: {ex.Message}");
-                return;
-            }
         }
-        finally
+        catch (Exception ex)
         {
-            await connection.CloseAsync();
+            Console.WriteLine($"Error Code: 20 | Failed to send activity updates to Discord bot: {ex.Message}");
+            return;
         }
     }
 }
