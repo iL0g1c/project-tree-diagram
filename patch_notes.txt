@@ -1,4 +1,3 @@
-0.1.1-beta
+0.2.0-beta
 =============================
-bug fixes
-Callsign code automation
+Player activity logging is now sent to discord.
