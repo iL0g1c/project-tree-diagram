@@ -110,6 +110,31 @@ def callsign_changes():
                 asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
     return jsonify({"success": "ok"}), 200
 
+@app.route("/player-activity-change", methods=["POST"])
+def player_activity_change():
+    data = request.json
+    description = ""
+    activity_channels = bot.configManager.get_all_of_key("player_activity_channel_id")
+    guild_force_codes = bot.configManager.get_all_of_key("force_code")
+    for force in list(guild_force_codes.keys()):
+        description = ""
+        for user in data:
+            if user["force_code"] == guild_force_codes[force]:
+                if user["is_online"]:
+                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just came online!\n")
+                else:
+                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just went offline!\n")
+        embed = discord.Embed(
+            title="Pilot Activity Updates",
+            description=description,
+            color=discord.Color.blurple()
+        )
+        if (description != ""):
+            channel = bot.get_channel(int(activity_channels[force]))
+            if channel:
+                asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
+    return jsonify({"success": "ok"}), 200
+
 def run_flask():
     app.run(host='0.0.0.0', port=5001, debug=False)
 
