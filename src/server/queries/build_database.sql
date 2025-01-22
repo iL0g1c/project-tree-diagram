@@ -15,7 +15,7 @@ CREATE TABLE callsign_change (
     new_callsign VARCHAR(50) NOT NULL,
     detected_at TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
-    REFERENCES Account (geofs_account_id)
+        REFERENCES Account (geofs_account_id)
 );
 
 CREATE TABLE online_status_change (
@@ -24,7 +24,19 @@ CREATE TABLE online_status_change (
     detected_at TIMESTAMP NOT NULL DEFAULT NOW(),
     is_online BOOLEAN NOT NULL,
     CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
-    REFERENCES Account (geofs_account_id)
+        REFERENCES Account (geofs_account_id)
+);
+
+CREATE TABLE patrol_event (
+    event_id BIGINT PRIMARY KEY DEFAULT nextval('event_id'),
+    geofs_account_id BIGINT NOT NULL,
+    force_code VARCHAR(10) NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
+        REFERENCES Account (geofs_account_id),
+    CONSTRAINT fk_force FOREIGN KEY (force_code)
+        REFERENCES Forces (force_code)
 );
 
 CREATE TABLE Forces (

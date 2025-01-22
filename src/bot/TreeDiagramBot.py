@@ -20,7 +20,7 @@ from proto import database_service_pb2
 from utils.configManager import ConfigManager
 
 load_dotenv()
-BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
+BOT_TOKEN = os.getenv('BOT_BETA_TOKEN')
 
 class TreeDiagram(commands.Bot):
     def __init__(self, botToken):
@@ -133,6 +133,37 @@ def player_activity_change():
             channel = bot.get_channel(int(activity_channels[force]))
             if channel:
                 asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
+    return jsonify({"success": "ok"}), 200
+
+@app.route("/patrol-event", methods=["POST"])
+def patrol_event():
+    patrols = request.json
+    """
+    DATA FORMAT
+    patrols = [
+        {
+            "discord_id": int64,
+            "patrol_count": int64,
+            "start_time": datetime,
+            "end_time": datetime,
+            "duration": deltatime
+
+        }
+    ]
+    """
+    for patrol in patrols:
+        embed = discord.Embed(
+            title="Patrol Event",
+            description=f"{bot.get_user(patrol["discord_id"]).mention} has completed a patrol!",
+            color=discord.Color.blurple()
+        )
+        embed.add_field(name="Patrol Count", value=patrol["patrol_count"])
+        embed.add_field(name="Start Time", value=patrol["start_time"])
+        embed.add_field(name="End Time", value=patrol["end_time"])
+        embed.add_field(name="Duration", value=patrol["duration"])
+        channel = bot.get_channel(patrol["patrol_channel_id"])
+        if channel:
+            asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
     return jsonify({"success": "ok"}), 200
 
 def run_flask():
