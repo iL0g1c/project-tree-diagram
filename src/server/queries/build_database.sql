@@ -13,7 +13,7 @@ CREATE TABLE callsign_change (
     geofs_account_id BIGINT NOT NULL,
     old_callsign VARCHAR(50),
     new_callsign VARCHAR(50) NOT NULL,
-    detected_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    detected_at TIMESTAMP NOT NULL,
     CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
         REFERENCES Account (geofs_account_id)
 );
@@ -21,7 +21,7 @@ CREATE TABLE callsign_change (
 CREATE TABLE online_status_change (
     event_id BIGINT PRIMARY KEY DEFAULT nextval('event_id'),
     geofs_account_id BIGINT NOT NULL,
-    detected_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    detected_at TIMESTAMP NOT NULL,
     is_online BOOLEAN NOT NULL,
     CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
         REFERENCES Account (geofs_account_id)

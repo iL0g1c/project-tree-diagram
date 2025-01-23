@@ -157,11 +157,32 @@ def patrol_event():
             description=f"{bot.get_user(patrol["discord_id"]).mention} has completed a patrol!",
             color=discord.Color.blurple()
         )
+        start_time_str = patrol["start_time"].rstrip("Z")
+        if '.' in start_time_str:
+            date_part, fraction_part = start_time_str.split('.', 1)
+            fraction_part = fraction_part[:6]
+            start_time_str = date_part + '.' + fraction_part
+        start_time = datetime.datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%S.%f")
+
+        end_time_str = patrol["end_time"].rstrip("Z")
+        if '.' in end_time_str:
+            date_part, fraction_part = end_time_str.split('.', 1)
+            fraction_part = fraction_part[:6]
+            end_time_str = date_part + '.' + fraction_part
+        end_time = datetime.datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M:%S.%f")
+
+        duration_str = patrol["duration"]
+        if '.' in duration_str:
+            date_part, fraction_part = duration_str.split('.', 1)
+            fraction_part = fraction_part[:6]
+            duration_str = date_part + '.' + fraction_part
+
+        duration = datetime.datetime.strptime(duration_str, "%H:%M:%S.%f")
         embed.add_field(name="Patrol Count", value=patrol["patrol_count"])
-        embed.add_field(name="Start Time", value=patrol["start_time"])
-        embed.add_field(name="End Time", value=patrol["end_time"])
-        embed.add_field(name="Duration", value=patrol["duration"])
-        channel = bot.get_channel(patrol["patrol_channel_id"])
+        embed.add_field(name="Start Time", value=start_time.strftime('%m/%d/%Y, %H:%M:%S') + "UTC")
+        embed.add_field(name="End Time", value=end_time.strftime('%m/%d/%Y, %H:%M:%S') + " UTC")
+        embed.add_field(name="Duration", value=duration.strftime('%H:%M:%S'))
+        channel = bot.get_channel(patrol["patrol_log_channel_id"])
         if channel:
             asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
     return jsonify({"success": "ok"}), 200

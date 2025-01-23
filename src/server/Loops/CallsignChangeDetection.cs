@@ -123,9 +123,10 @@ class CallsignChangeDetection
             try {
                 if (callsignChanges.Count > 0)
                 {
+                    string utcNow = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
                     string insertValues = string.Join(", ",
                         callsignChanges.Select(c =>
-                            $"({c.acid}, '{EscapeForSql(c.old_callsign)}', '{EscapeForSql(c.new_callsign)}', NOW())")
+                            $"({c.acid}, '{EscapeForSql(c.old_callsign)}', '{EscapeForSql(c.new_callsign)}', '{utcNow}')")
 
                     );
                     string insertCallsignChangeSql = $"{insertCallsignChangeBase}\n{insertValues};";

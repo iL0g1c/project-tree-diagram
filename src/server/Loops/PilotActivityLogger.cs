@@ -18,18 +18,19 @@ class PilotActivityLogger
         var patrol_events = new List<Dictionary<string, object?>>();
         var valid_users = new List<Dictionary<string, object?>>();
 
-        string sql_insert_patrol_event = "";
+        NpgsqlConnection? connection = null;
         // ===============================================================
         // 1) Update users going online
         // ===============================================================
         try {
-            sql_insert_patrol_event = File.ReadAllText("queries/update_online_users.sql");
-            using (var connection = new NpgsqlConnection(_connectionString))
+            string sql_update_online_users = File.ReadAllText("queries/update_online_users.sql");
+            using (connection = new NpgsqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new NpgsqlCommand(sql_insert_patrol_event, connection))
+                using (var command = new NpgsqlCommand(sql_update_online_users, connection))
                 {
                     command.Parameters.AddWithValue("@account_ids", NpgsqlTypes.NpgsqlDbType.Array | NpgsqlTypes.NpgsqlDbType.Bigint, account_ids.ToArray());
+                    command.Parameters.AddWithValue("@detected_at", DateTime.UtcNow);
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -68,13 +69,14 @@ class PilotActivityLogger
         // 2) Update users going offline
         // ===============================================================
         try {
-            sql_insert_patrol_event = File.ReadAllText("queries/update_offline_users.sql");
-            using (var connection = new NpgsqlConnection(_connectionString))
+            string sql_update_offline_users = File.ReadAllText("queries/update_offline_users.sql");
+            using (connection = new NpgsqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new NpgsqlCommand(sql_insert_patrol_event, connection))
+                using (var command = new NpgsqlCommand(sql_update_offline_users, connection))
                 {
                     command.Parameters.AddWithValue("@account_ids", NpgsqlTypes.NpgsqlDbType.Array | NpgsqlTypes.NpgsqlDbType.Bigint, account_ids.ToArray());
+                    command.Parameters.AddWithValue("@detected_at", DateTime.UtcNow);
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -114,7 +116,7 @@ class PilotActivityLogger
         // ===============================================================
         try {
             Dictionary<Int64, object> callsign_formats = new Dictionary<Int64, object>();
-            using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+            using (connection = new NpgsqlConnection(_connectionString))
             {
                 connection.Open();
                 string query_template = File.ReadAllText("queries/get_all_of_key.sql");
@@ -192,66 +194,49 @@ class PilotActivityLogger
         // ===============================================================
         try {
             // Get total number of patrols for the force.
-            var sql_get_patrol_count = File.ReadAllText("queries/get_patrol_count.sql");
-            var sql_get_guild_id_from_force_code = File.ReadAllText("queries/get_guild_id_from_force_code.sql");
-            sql_insert_patrol_event = File.ReadAllText("queries/insert_patrol_event.sql");
-            
-            using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+            var update_patrol_events = File.ReadAllText("queries/update_patrol_events.sql");
+
+            connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            foreach (var user in users_going_offline)
             {
-                await connection.OpenAsync();
+                if (user["force_code"] == null) continue;
 
+                var end_time = DateTime.UtcNow;
                 var patrol_event_package = new Dictionary<string, object?>();
-                foreach (var user in users_going_offline)
+                
+                using (var command = new NpgsqlCommand(update_patrol_events, connection))
                 {
-                    if (user["force_code"] == null)
-                    {
-                        continue;
-                    }
+                    command.Parameters.AddWithValue("@geofs_account_id", user["geofs_account_id"] ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@force_code", user["force_code"] ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@end_time", end_time);
 
-                    using (NpgsqlCommand command = new NpgsqlCommand(sql_get_guild_id_from_force_code, connection))
+                    using var reader = await command.ExecuteReaderAsync();
+                    if (await reader.ReadAsync())
                     {
-                        command.Parameters.AddWithValue("@force_code", user["force_code"]);
-                        patrol_event_package.Add("guild_id", await command.ExecuteScalarAsync());
+                        patrol_event_package["start_time"] = reader.GetDateTime(reader.GetOrdinal("start_time")).ToUniversalTime();
+                        patrol_event_package["event_id"] = reader.GetInt64(reader.GetOrdinal("event_id"));
+                        patrol_event_package["patrol_log_channel_id"] = reader["patrol_log_channel_id"];
+                        patrol_event_package["patrol_count"] = reader["patrol_count"];
                     }
-
-                    // Get total number of patrols for a certain geofs account.
-                    var end_time = DateTime.UtcNow;
-                    using (NpgsqlCommand command = new NpgsqlCommand(sql_get_patrol_count, connection))
-                    {
-                        command.Parameters.AddWithValue("@geofs_account_id", user["geofs_account_id"] ?? DBNull.Value);
-                        patrol_event_package.Add("patrol_count", await command.ExecuteScalarAsync());
-                    }
-
-                    using (NpgsqlCommand command = new NpgsqlCommand(sql_insert_patrol_event, connection))
-                    {
-                        command.Parameters.AddWithValue("@geofs_account_id", user["geofs_account_id"] ?? DBNull.Value);
-                        command.Parameters.AddWithValue("@force_code", user["force_code"] ?? DBNull.Value);
-                        command.Parameters.AddWithValue("@end_time", end_time);
-                        
-                        using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
-                        {
-                            if (await reader.ReadAsync())
-                            {
-                                
-                                patrol_event_package.Add("start_time", reader.GetDateTime(reader.GetOrdinal("start_time")));
-                                patrol_event_package.Add("event_id", reader.GetInt64(reader.GetOrdinal("event_id")));
-                            }
-                        }
-                    }
-
-                    patrol_event_package.Add("discord_id", user["discord_id"]);
-                    patrol_event_package.Add("end_time", end_time);
-                    patrol_event_package.Add("duration", (DateTime)patrol_event_package["end_time"] - (DateTime)patrol_event_package["start_time"]);
-                    patrol_events.Add(patrol_event_package);
                 }
+
+                patrol_event_package["discord_id"] = user["discord_id"];
+                patrol_event_package["end_time"] = end_time;
+                patrol_event_package["duration"] = (DateTime)patrol_event_package["end_time"] - (DateTime)patrol_event_package["start_time"];
+
+                patrol_events.Add(patrol_event_package);
             }
-
-
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error Code: 24 | Failed to send patrol events to database and package data for discord bot: {ex.Message}");
             return;
+        }
+        finally
+        {
+            connection?.Dispose();
         }
         // ===============================================================
         // 7) Send patrol events for Discord bot

@@ -6,8 +6,8 @@ WITH updated_accounts AS (
     RETURNING geofs_account_id, discord_id, force_code, callsign
 ),
 inserted_events AS (
-    INSERT INTO online_status_change (geofs_account_id, is_online)
-    SELECT geofs_account_id, FALSE
+    INSERT INTO online_status_change (geofs_account_id, detected_at, is_online)
+    SELECT geofs_account_id, @detected_at, FALSE
         FROM updated_accounts
     RETURNING geofs_account_id, is_online
 )
