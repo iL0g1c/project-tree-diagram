@@ -3,6 +3,7 @@
 FEATURES
 --------
 Automatic patrol logging
+Added a command to force update the code.
 Added Event Loop throttling
 
 CHANGES

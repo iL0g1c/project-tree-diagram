@@ -136,6 +136,7 @@ class CallsignChangeDetection
                     using var insertChangeCmd = new NpgsqlCommand(insertCallsignChangeSql, connection, transaction);
                     await insertChangeCmd.ExecuteNonQueryAsync();
                 }
+                Console.WriteLine($"Processed {callsignChanges.Count} callsign changes");
             }
             catch (Exception ex)
             {

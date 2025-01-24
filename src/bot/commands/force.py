@@ -71,18 +71,25 @@ class Force(commands.Cog):
 
     @force_group.command(name="update-code", description="Update the force code.")
     async def update_code(self, interaction: discord.Interaction):
-        first_character = random.choice(string.ascii_uppercase)
-        second_character = random.randint(0, 9)
-        third_character = random.choice(string.ascii_uppercase)
-        callsign_code = first_character + str(second_character) + third_character
+        user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
+        if user_role_check[0]:
+            first_character = random.choice(string.ascii_uppercase)
+            second_character = random.randint(0, 9)
+            third_character = random.choice(string.ascii_uppercase)
+            callsign_code = first_character + str(second_character) + third_character
 
-        config = self.configManager.get_config(int(interaction.guild.id))
-        channel = self.bot.get_channel(int(config["callsign_code_channel_id"]))
+            config = self.configManager.get_config(int(interaction.guild.id))
+            channel = self.bot.get_channel(int(config["callsign_code_channel_id"]))
 
-        if channel:
-            member_role = discord.utils.get(interaction.guild.roles, id=int(config["member_role_id"]))
-            await channel.send(f"# **__Daily code__**\n**Code: {callsign_code}**\n**Example:** `Tempest-#[140][{callsign_code}][IDF]`\n{member_role.mention}")
-            await interaction.response.send_message("Force code updated successfully.")
+            if channel:
+                member_role = discord.utils.get(interaction.guild.roles, id=int(config["member_role_id"]))
+                await channel.send(f"# **__Daily code__**\n**Code: {callsign_code}**\n**Example:** `Tempest-#[140][{callsign_code}][IDF]`\n{member_role.mention}")
+                await interaction.response.send_message("Force code updated successfully.")
+        else:
+            if user_role_check[1] is None:
+                await interaction.response.send_message("You do not have permission to use this command.")
+            else:
+                await interaction.response.send_message(user_role_check[1])
 
 async def setup(bot):
     await bot.add_cog(Force(bot))
