@@ -6,7 +6,7 @@ Automatic patrol logging
 
 CHANGES
 -------
-All times are now in UTC
+All times are now displayed in UTC
 
 BUG FIXES
 ---------

@@ -179,7 +179,7 @@ def patrol_event():
 
         duration = datetime.datetime.strptime(duration_str, "%H:%M:%S.%f")
         embed.add_field(name="Patrol Count", value=patrol["patrol_count"])
-        embed.add_field(name="Start Time", value=start_time.strftime('%m/%d/%Y, %H:%M:%S') + "UTC")
+        embed.add_field(name="Start Time", value=start_time.strftime('%m/%d/%Y, %H:%M:%S') + " UTC")
         embed.add_field(name="End Time", value=end_time.strftime('%m/%d/%Y, %H:%M:%S') + " UTC")
         embed.add_field(name="Duration", value=duration.strftime('%H:%M:%S'))
         channel = bot.get_channel(patrol["patrol_log_channel_id"])

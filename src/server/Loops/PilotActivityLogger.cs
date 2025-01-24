@@ -218,7 +218,7 @@ class PilotActivityLogger
                         patrol_event_package["start_time"] = reader.GetDateTime(reader.GetOrdinal("start_time")).ToUniversalTime();
                         patrol_event_package["event_id"] = reader.GetInt64(reader.GetOrdinal("event_id"));
                         patrol_event_package["patrol_log_channel_id"] = reader["patrol_log_channel_id"];
-                        patrol_event_package["patrol_count"] = reader["patrol_count"];
+                        patrol_event_package["patrol_count"] = (Int64) reader["patrol_count"] + 1;
                     }
                 }
 

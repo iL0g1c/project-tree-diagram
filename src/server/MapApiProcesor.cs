@@ -10,7 +10,6 @@ using System.Diagnostics;
 
 public class MapApiProcessor
 {
-    private readonly System.Timers.Timer _timer;
     private readonly HttpClient _httpClient;
     private bool _isRunning;
     private DatabaseLayer _databaseLayer;
@@ -18,33 +17,56 @@ public class MapApiProcessor
     public MapApiProcessor()
     {
         _httpClient = new HttpClient();
-        _timer = new System.Timers.Timer(10000);
-        _timer.Elapsed += async (sender, e) => await GetOnlineUsers();
         _isRunning = false;
         _databaseLayer = new DatabaseLayer();
     }
 
-    public void Start()
+    public async Task Start()
     {
-        if (!_isRunning)
+        Console.WriteLine("Starting MapApiProcessor...");
+        _isRunning = true;
+
+        while (_isRunning)
         {
-            _timer.Start();
-            _isRunning = true;
-            Console.WriteLine("Started monitoring of GeoFS Map API");
+            try
+            {
+                var stopwatch = Stopwatch.StartNew();
+
+                await ProcessUsers();
+
+                stopwatch.Stop();
+                var elapsed = stopwatch.ElapsedMilliseconds;
+
+                Console.WriteLine($"Processed users in {stopwatch.Elapsed} seconds.");
+
+                var remaining_delay = 10000 - elapsed;
+
+                if (remaining_delay > 0)
+                {
+                    await Task.Delay((int)remaining_delay);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error during processing: {e.Message}");
+            }
         }
     }
 
     public void Stop()
     {
-        if (_isRunning)
-        {
-            _timer.Stop();
-            _isRunning = false;
-            Console.WriteLine("Stopped monitoring of GeoFS Map API");
-        }
+        _isRunning = false;
+        Console.WriteLine("Stopped monitoring of GeoFS Map API");
     }
 
-    private async Task GetOnlineUsers()
+    private async Task ProcessUsers()
+    {
+        List<User> users = await GetOnlineUsers();
+        await _databaseLayer.ExecuteEventLoop(users);
+    }
+
+    private async Task<List<User>> GetOnlineUsers()
     {
         try
         {
@@ -85,8 +107,7 @@ public class MapApiProcessor
                             };
                         })
                         .ToList();
-                    
-                    _databaseLayer.ExecuteEventLoop(filteredUsers);
+                    return filteredUsers;
                 }
             }
 
@@ -96,6 +117,7 @@ public class MapApiProcessor
             Console.WriteLine($"Error Code 1: {e.Message}");
             Console.WriteLine(e.StackTrace);
         }
+        return new List<User>();
     }
 
     public class User

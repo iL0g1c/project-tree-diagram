@@ -1,7 +1,7 @@
 CREATE TABLE Account (
     geofs_account_id BIGINT PRIMARY KEY,
     discord_id BIGINT,
-    is_online BOOLEAN,
+    is_online BOOLEAN DEFAULT FALSE,
     callsign VARCHAR(50),
     force_code VARCHAR(10)
 );
@@ -41,7 +41,7 @@ CREATE TABLE patrol_event (
 
 CREATE TABLE Forces (
     guild_id BIGINT PRIMARY KEY,
-    force_code VARCHAR(10),
+    force_code VARCHAR(10) UNIQUE,
     developer_role_id BIGINT,
     high_command_role_id BIGINT,
     member_role_id BIGINT,
@@ -50,5 +50,5 @@ CREATE TABLE Forces (
     callsign_change_channel_id BIGINT,
     callsign_code_channel_id BIGINT,
     callsign_code_loop_enabled BOOLEAN,
-    callsign_format VARCHAR(50),
+    callsign_format VARCHAR(50)
 );
