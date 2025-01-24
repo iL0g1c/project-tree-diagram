@@ -1,8 +1,8 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from discord.ext import tasks
 from discord.utils import escape_markdown
+from discord.ext import tasks
 import datetime
 from dotenv import load_dotenv
 import asyncio
@@ -11,9 +11,9 @@ import logging
 import sys
 import grpc
 import threading
-from flask import Flask, request, jsonify
 import random
 import string
+from flask import Flask, request, jsonify
 
 from proto import database_service_pb2_grpc
 from proto import database_service_pb2
@@ -67,6 +67,7 @@ class TreeDiagram(commands.Bot):
                 self.logger.log(20, f"Joined guild: {guild.name}")
             else:
                 self.logger.log(40, f"Failed guild setup: {guild.name}")
+
     @tasks.loop(time=datetime.time(hour=0, minute=0, second=0))
     async def update_callsign_code(self):
         first_character = random.choice(string.ascii_uppercase)
@@ -82,9 +83,6 @@ class TreeDiagram(commands.Bot):
                 if channel:
                     member_role = discord.utils.get(self.get_guild(int(key)).roles, id=int(member_roles[key]))
                     await channel.send(f"# **__Daily code__**\n**Code: {callsign_code}**\n**Example:** `Tempest-#[140][{callsign_code}][IDF]`\n{member_role.mention}")
-
-        
-
 
 app = Flask(__name__)
 @app.route("/callsign-changes", methods=["POST"])
