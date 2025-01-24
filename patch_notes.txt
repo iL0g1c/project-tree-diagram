@@ -12,6 +12,4 @@ All times are now displayed in UTC
 
 BUG FIXES
 ---------
-TD0001: /force register-pilot does not tell the user explicitly when they can't add a user because they are not in the database.
-TD0002: /intelligence add-discord-id does not tell users on discord when they can't adad a user beacuse they are not in teh database.
-TD0003: Callsign Code displayed incorrectly
+TD0001: /intelligence add-discord-id does not tell users on discord when they can't add a user beacuse they are not in the database.
