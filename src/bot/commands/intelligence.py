@@ -28,6 +28,7 @@ class Intelligence(commands.Cog):
                 stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
                 request = database_service_pb2.InsertUserDiscordIdRequest(discord_id=int(discord_id), geofs_account_id=int(geofs_id))
                 response = stub.InsertUserDiscordId(request)
+                
                 if response.success:
                     await interaction.followup.send(content="User added successfully.")
                 else:

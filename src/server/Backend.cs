@@ -3,12 +3,12 @@
 public class Backend
 {
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Console.WriteLine("Starting up...");
         StartGrpcServer();
         MapApiProcessor _mapApiProcessor = new MapApiProcessor();
-        _mapApiProcessor.Start();
+        await _mapApiProcessor.Start();
         Task.Delay(-1).Wait();
     }
 

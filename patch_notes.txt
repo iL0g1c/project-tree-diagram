@@ -1,7 +1,15 @@
-0.2.1-beta
+0.3.0-beta
 =============================
-[X] renamed the intelligence add-id command to intelligence add-discord-id
-[X] renamed force add-pilot to "force register-pilot"
-[X] removed unneeded patrol commands
-add command "force list-pilots" to list all pilots in your force.
-[X] Sends online and offline messages when callsign matches format.
+FEATURES
+--------
+Automatic patrol logging
+Added a command to force update the code.
+Added Event Loop throttling
+
+CHANGES
+-------
+All times are now displayed in UTC
+
+BUG FIXES
+---------
+TD0001: /intelligence add-discord-id does not tell users on discord when they can't add a user because they are not in the database.

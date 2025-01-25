@@ -1,0 +1,5 @@
+check what happens when A user logs in as a offduty callsign, changes their callsign and then logs off as an on duty callsign
+code in protection against over lapping event loops
+BUG: When a new user is detected it doesn't create an initial online event
+
+[X] CONFIRM ALL OPERATIONS

@@ -95,9 +95,10 @@ class CallsignChangeDetection
             // ===============================================================
             var callsignChanges = new List<(long acid, string old_callsign, string new_callsign)>();
             var upserts = new List<(long acid, string callsign)>();
+            var upserts_raw = new List<(long acid, string callsign)>();
             try {
                 callsignChanges = new List<(long acid, string old_callsign, string new_callsign)>();
-                upserts = new List<(long acid, string callsign)>();
+                upserts_raw = new List<(long acid, string callsign)>();
 
                 foreach (var user in users)
                 {
@@ -108,8 +109,10 @@ class CallsignChangeDetection
                     }
 
                     // Attempt an upsert for every user entry
-                    upserts.Add((user.acid, user.callsign));
+                    upserts_raw.Add((user.acid, user.callsign));
                 }
+
+                upserts = upserts_raw.GroupBy(x => x.acid).Select(g => g.Last()).ToList();
             }
             catch (Exception ex)
             {
@@ -123,15 +126,17 @@ class CallsignChangeDetection
             try {
                 if (callsignChanges.Count > 0)
                 {
+                    string utcNow = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
                     string insertValues = string.Join(", ",
                         callsignChanges.Select(c =>
-                            $"({c.acid}, '{EscapeForSql(c.old_callsign)}', '{EscapeForSql(c.new_callsign)}', NOW())")
+                            $"({c.acid}, '{EscapeForSql(c.old_callsign)}', '{EscapeForSql(c.new_callsign)}', '{utcNow}')")
 
                     );
                     string insertCallsignChangeSql = $"{insertCallsignChangeBase}\n{insertValues};";
                     using var insertChangeCmd = new NpgsqlCommand(insertCallsignChangeSql, connection, transaction);
                     await insertChangeCmd.ExecuteNonQueryAsync();
                 }
+                Console.WriteLine($"Processed {callsignChanges.Count} callsign changes");
             }
             catch (Exception ex)
             {
@@ -147,7 +152,7 @@ class CallsignChangeDetection
                 {
                     string upsertValues = string.Join(", ",
                         upserts.Select(u =>
-                            $"({u.acid}, '{EscapeForSql(u.callsign)}', TRUE)"
+                            $"({u.acid}, '{EscapeForSql(u.callsign)}')"
                         )
                     );
 
@@ -205,7 +210,7 @@ class CallsignChangeDetection
             // ===============================================================
             try {
                 await transaction.CommitAsync();
-                Console.WriteLine($"Processed {users.Count} users. Inserted {callsignChanges.Count} callsign changes.");
+                    
             }
             catch (Exception ex)
             {
