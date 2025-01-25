@@ -1,0 +1,10 @@
+{
+    "folders": [
+		{
+			"path": "../src/proto_source"
+		},
+		{
+			"path": "../src/bot"
+		}
+	]
+}
