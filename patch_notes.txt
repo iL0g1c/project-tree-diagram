@@ -1,15 +1,12 @@
-0.3.0-beta
+0.3.1-beta
 =============================
-FEATURES
---------
-Automatic patrol logging
-Added a command to force update the code.
-Added Event Loop throttling
-
 CHANGES
 -------
-All times are now displayed in UTC
+Deleted command to log when you disable an bogey.
+Backend optimizations including: better handling of grpc connections.
 
 BUG FIXES
 ---------
-TD0001: /intelligence add-discord-id does not tell users on discord when they can't add a user because they are not in the database.
+TD0002: Patrol sub commands were not being created properly.
+TD0003: Patrol events were still being logged if pilot wasn't in proper callsign.
+TD0004: When Tree Diagram detects an account for the first time an online event is generated.

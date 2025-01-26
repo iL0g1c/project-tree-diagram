@@ -23,5 +23,8 @@ SELECT
       WHERE force_code = @force_code) AS patrol_log_channel_id,
     (SELECT COUNT(*)
        FROM patrol_event
-      WHERE geofs_account_id = @geofs_account_id) AS patrol_count
+      WHERE geofs_account_id = @geofs_account_id) AS patrol_count,
+    (SELECT callsign_format
+       FROM forces
+      WHERE force_code = @force_code) AS callsign_format
 FROM inserted;

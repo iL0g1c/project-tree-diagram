@@ -1,7 +1,6 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-import grpc
 import utils.validateUser as validateUser
 import utils.paginationEmbed as paginationEmbed
 import utils.configManager as configManager
