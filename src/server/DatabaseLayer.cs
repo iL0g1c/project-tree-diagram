@@ -26,6 +26,6 @@ public class DatabaseLayer
     {
         Debug.WriteLine("Executing event loop");
         await callsignChangeDetection.ExecuteProcess(users);
-        pilotActivityLogger.ExecuteProcess(users);
+        await pilotActivityLogger.ExecuteProcess(users);
     }
 }

@@ -1,19 +1,20 @@
 import discord
-from discord import app_commands
 from discord.ext import commands
 from discord.utils import escape_markdown
+from discord.ext import tasks
+import datetime
 from dotenv import load_dotenv
 import asyncio
 import os
 import logging
 import sys
-import grpc
-import threading
-from flask import Flask, request, jsonify
-
-from proto import database_service_pb2_grpc
 from proto import database_service_pb2
+import threading
+import random
+import string
+from flask import Flask, request, jsonify
 from utils.configManager import ConfigManager
+import utils.GrpcClient as GrpcClient
 
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
@@ -28,10 +29,13 @@ class TreeDiagram(commands.Bot):
         self.logger.addHandler(console_handler)
 
         intents = discord.Intents.all()
+
+        self.grpc_client = GrpcClient.GrpcClient()
         super().__init__(command_prefix="=", intents=intents)
 
     async def on_ready(self):
         self.logger.log(20, f'{self.user} has connected to Discord!')
+        await self.update_callsign_code.start()
 
     async def setup_hook(self) -> None:
         self.logger.log(20, "Starting up...")
@@ -54,14 +58,28 @@ class TreeDiagram(commands.Bot):
             await self.load_extension(f"commands.{extension}")
 
     async def on_guild_join(self, guild):
-        with grpc.insecure_channel("localhost:50051") as channel:
-            stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
-            request = database_service_pb2.InsertNewGuildRequest(guild_id=int(guild.id))
-            response = stub.InsertNewGuild(request)
-            if response.success:
-                self.logger.log(20, f"Joined guild: {guild.name}")
-            else:
-                self.logger.log(40, f"Failed guild setup: {guild.name}")
+        request = database_service_pb2.GetConfigurationKeysRequest(guild_id=guild.id)
+        response = self.grpc_client.call_method("DatabaseService", "InsertNewGuild", request)
+        if response.success:
+            self.logger.log(20, f"Joined guild: {guild.name}")
+        else:
+            self.logger.log(40, f"Failed guild setup: {guild.name}")
+
+    @tasks.loop(time=datetime.time(hour=0, minute=0, second=0))
+    async def update_callsign_code(self):
+        first_character = random.choice(string.ascii_uppercase)
+        second_character = random.randint(0, 9)
+        third_character = random.choice(string.ascii_uppercase)
+        callsign_code = first_character + str(second_character) + third_character
+        callsign_code_channels = self.configManager.get_all_of_key("callsign_code_channel_id")
+        callsign_code_loop_enabled = self.configManager.get_all_of_key("callsign_code_loop_enabled")
+        member_roles = self.configManager.get_all_of_key("member_role_id")
+        for key in callsign_code_channels:
+            if callsign_code_channels[key] and callsign_code_loop_enabled[key]:
+                channel = self.get_channel(int(callsign_code_channels[key]))
+                if channel:
+                    member_role = discord.utils.get(self.get_guild(int(key)).roles, id=int(member_roles[key]))
+                    await channel.send(f"# **__Daily code__**\n**Code: {callsign_code}**\n**Example:** `Tempest-#[140][{callsign_code}][IDF]`\n{member_role.mention}")
 
 app = Flask(__name__)
 @app.route("/callsign-changes", methods=["POST"])
@@ -85,6 +103,83 @@ def callsign_changes():
             channel = bot.get_channel(int(keys[key]))
             if channel:
                 asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
+    return jsonify({"success": "ok"}), 200
+
+@app.route("/player-activity-change", methods=["POST"])
+def player_activity_change():
+    data = request.json
+    description = ""
+    activity_channels = bot.configManager.get_all_of_key("player_activity_channel_id")
+    guild_force_codes = bot.configManager.get_all_of_key("force_code")
+    for force in list(guild_force_codes.keys()):
+        description = ""
+        for user in data:
+            if user["force_code"] == guild_force_codes[force]:
+                if user["is_online"]:
+                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just came online to start their patrol!\n")
+                else:
+                    description += escape_markdown(f"{bot.get_user(user['discord_id']).mention} just went offline to end their patrol!\n")
+        embed = discord.Embed(
+            title="Pilot Activity Updates",
+            description=description,
+            color=discord.Color.blurple()
+        )
+        if (description != ""):
+            channel = bot.get_channel(int(activity_channels[force]))
+            if channel:
+                asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
+    return jsonify({"success": "ok"}), 200
+
+@app.route("/patrol-event", methods=["POST"])
+def patrol_event():
+    patrols = request.json
+    """
+    DATA FORMAT
+    patrols = [
+        {
+            "discord_id": int64,
+            "patrol_count": int64,
+            "start_time": datetime,
+            "end_time": datetime,
+            "duration": deltatime
+
+        }
+    ]
+    """
+    for patrol in patrols:
+        embed = discord.Embed(
+            title="Patrol Event",
+            description=f"{bot.get_user(patrol["discord_id"]).mention} has completed a patrol!",
+            color=discord.Color.blurple()
+        )
+        start_time_str = patrol["start_time"].rstrip("Z")
+        if '.' in start_time_str:
+            date_part, fraction_part = start_time_str.split('.', 1)
+            fraction_part = fraction_part[:6]
+            start_time_str = date_part + '.' + fraction_part
+        start_time = datetime.datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%S.%f")
+
+        end_time_str = patrol["end_time"].rstrip("Z")
+        if '.' in end_time_str:
+            date_part, fraction_part = end_time_str.split('.', 1)
+            fraction_part = fraction_part[:6]
+            end_time_str = date_part + '.' + fraction_part
+        end_time = datetime.datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M:%S.%f")
+
+        duration_str = patrol["duration"]
+        if '.' in duration_str:
+            date_part, fraction_part = duration_str.split('.', 1)
+            fraction_part = fraction_part[:6]
+            duration_str = date_part + '.' + fraction_part
+
+        duration = datetime.datetime.strptime(duration_str, "%H:%M:%S.%f")
+        embed.add_field(name="Patrol Count", value=patrol["patrol_count"])
+        embed.add_field(name="Start Time", value=start_time.strftime('%m/%d/%Y, %H:%M:%S') + " UTC")
+        embed.add_field(name="End Time", value=end_time.strftime('%m/%d/%Y, %H:%M:%S') + " UTC")
+        embed.add_field(name="Duration", value=duration.strftime('%H:%M:%S'))
+        channel = bot.get_channel(patrol["patrol_log_channel_id"])
+        if channel:
+            asyncio.run_coroutine_threadsafe(channel.send(embed=embed), bot.loop)
     return jsonify({"success": "ok"}), 200
 
 def run_flask():

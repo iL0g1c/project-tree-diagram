@@ -1,0 +1,10 @@
+check what happens when A user logs in as a offduty callsign, changes their callsign and then logs off as an on duty callsign
+
+Cache the config file in grpc server. Update config cache when config is updated, and when config is requested immediately send it.
+
+Discord patrol deletion (0.4.0)
+kill logging (0.4.0)
+manual patrol logging (0.4.0)
+get all patrols by specified date (0.4.0)
+
+setup so that the live and beta backends can run in dual mode.

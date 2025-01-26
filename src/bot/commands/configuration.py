@@ -1,7 +1,6 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-import grpc
 import utils.validateUser as validateUser
 import utils.paginationEmbed as paginationEmbed
 import utils.configManager as configManager
@@ -23,6 +22,9 @@ class Configuration(commands.Cog):
             app_commands.Choice(name="Player Activity Channel ID", value="player_activity_channel_id"),
             app_commands.Choice(name="Patrol Log Channel ID", value="patrol_log_channel_id"),
             app_commands.Choice(name="Callsign Change Channel ID", value="callsign_change_channel_id"),
+            app_commands.Choice(name="Callsign Code Channel ID", value="callsign_code_channel_id"),
+            app_commands.Choice(name="Callsign Code Loop Enabled", value="callsign_code_loop_enabled"),
+            app_commands.Choice(name="Callsign Format", value="callsign_format"),
         ]
     )
     async def config_change(self, interaction: discord.Interaction, key: app_commands.Choice[str], value: str):

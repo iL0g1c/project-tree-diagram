@@ -15,6 +15,7 @@ class InsertUserDiscordIdHandler
     {
         try
         {
+            int rows_affected = 0;
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
@@ -24,10 +25,17 @@ class InsertUserDiscordIdHandler
                 {
                     cmd.Parameters.AddWithValue("@geofs_account_id", geofs_account_id);
                     cmd.Parameters.AddWithValue("@discord_id", discord_id);
-                    cmd.ExecuteNonQuery();
+                    rows_affected = cmd.ExecuteNonQuery();
                 }
             }
-            return true;
+            if (rows_affected == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         catch (Exception e)
         {

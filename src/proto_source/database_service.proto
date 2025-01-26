@@ -12,6 +12,7 @@ service DatabaseService {
     rpc GetConfigurationKeys (GetConfigurationKeysRequest) returns (GetConfigurationKeysResponse);
     rpc UpdateConfigurationKeys (UpdateConfigurationKeysRequest) returns (UpdateConfigurationKeysResponse);
     rpc GetAllOfKey (GetAllOfKeyRequest) returns (GetAllOfKeyResponse);
+    rpc GetForceUsers (GetForceUsersRequest) returns (GetForceUsersResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -88,4 +89,17 @@ message GetAllOfKeyRequest {
 
 message GetAllOfKeyResponse {
     map<int64, google.protobuf.Any> keys = 1;
+}
+
+message GetForceUsersRequest {
+    int64 guild_id = 1;
+}
+
+message UserDict {
+    int64 discord_id = 1;
+    int64 geofs_account_id = 2;
+}
+
+message GetForceUsersResponse {
+    repeated UserDict users = 1;
 }
