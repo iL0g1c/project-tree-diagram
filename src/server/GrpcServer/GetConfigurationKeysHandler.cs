@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Npgsql;
 
 class GetConfigurationKeysHandler
@@ -9,34 +10,28 @@ class GetConfigurationKeysHandler
         connectionString = dbLayer.connectionString;
     }
 
-    public Dictionary<object,object> GetConfigurationKeys(Int64 guild_id)
+    public async Task<Dictionary<object,object>> GetConfigurationKeys(Int64 guild_id)
     {
         try
         {
-            Dictionary<object,object> results = new Dictionary<object,object>();
+            var results = new Dictionary<object,object>();
 
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = File.ReadAllText("queries/get_configuration_keys.sql");
+            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+            await connection.OpenAsync();
+            string query = await File.ReadAllTextAsync("queries/get_configuration_keys.sql");
 
-                using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
+            using NpgsqlCommand cmd = new NpgsqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@guild_id", guild_id);
+                using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
                 {
-                    cmd.Parameters.AddWithValue("@guild_id", guild_id);
-                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                    for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        if (reader.Read())
-                        {
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                string key = reader.GetName(i);
-                                object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                                results[key] = value;
-                            }
-                        }
+                        string key = reader.GetName(i);
+                        object value = reader.GetValue(i);
+                        results[key] = value;
                     }
                 }
-            }
             Console.WriteLine($"Configuration Keys: {results}");
             return results;
         }

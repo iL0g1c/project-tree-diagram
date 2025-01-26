@@ -28,7 +28,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _insertUserDiscordIdHandler.InsertUserDiscordId(request.GeofsAccountId, request.DiscordId);
+            var isSuccessful = await _insertUserDiscordIdHandler.InsertUserDiscordId(request.GeofsAccountId, request.DiscordId);
             var response = new InsertUserDiscordIdResponse();
             response.Success = isSuccessful;
             return response;
@@ -44,7 +44,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var events = _getUserCallsignChangesHandler.GetCallsignChangesEvents(request.GeofsAccountId);
+            var events = await _getUserCallsignChangesHandler.GetCallsignChangesEvents(request.GeofsAccountId);
             var response = new UserCallsignChangesResponse();
 
             foreach (var evt in events)
@@ -69,7 +69,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _updateUserForceCodeHandler.UpdateUserForceCode(request.GeofsAccountId, request.DiscordId, request.GuildId);
+            var isSuccessful = await _updateUserForceCodeHandler.UpdateUserForceCode(request.GeofsAccountId, request.DiscordId, request.GuildId);
             var response = new UpdateUserForceCodeResponse();
             response.Success = isSuccessful;
             return response;
@@ -85,7 +85,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _insertNewGuildHandler.InsertNewGuild(request.GuildId);
+            var isSuccessful = await _insertNewGuildHandler.InsertNewGuild(request.GuildId);
             var response = new InsertNewGuildResponse();
             response.Success = isSuccessful;
             return response;
@@ -101,7 +101,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var keys = _getConfigurationKeysHandler.GetConfigurationKeys(request.GuildId);
+            var keys = await _getConfigurationKeysHandler.GetConfigurationKeys(request.GuildId);
             var response = new GetConfigurationKeysResponse();
 
             foreach (var key in keys)
@@ -140,7 +140,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _updateConfigurationKeysHandler.UpdateConfigurationKeys(request.GuildId, request.Key, request.Value);
+            var isSuccessful = await _updateConfigurationKeysHandler.UpdateConfigurationKeys(request.GuildId, request.Key, request.Value);
             var response = new UpdateConfigurationKeysResponse();
             response.Success = isSuccessful;
             return response;
@@ -155,7 +155,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var keys = _getAllOfKeyHandler.GetAllOfKey(request.Key);
+            var keys = await _getAllOfKeyHandler.GetAllOfKey(request.Key);
             var response = new GetAllOfKeyResponse();
 
             foreach (var key in keys)
@@ -195,7 +195,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var users = _getForceUsersHandler.GetForceUsers(request.GuildId);
+            var users = await _getForceUsersHandler.GetForceUsers(request.GuildId);
             var response = new GetForceUsersResponse();
             foreach (var user in users)
             {
