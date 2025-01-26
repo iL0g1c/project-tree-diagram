@@ -11,6 +11,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly UpdateConfigurationKeysHandler _updateConfigurationKeysHandler;
     private readonly GetAllOfKeyHandler _getAllOfKeyHandler;
     private readonly GetForceUsersHandler _getForceUsersHandler;
+    private readonly InsertPatrolLogHandler _insertPatrolLogHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -22,6 +23,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _updateConfigurationKeysHandler = new UpdateConfigurationKeysHandler();
         _getAllOfKeyHandler = new GetAllOfKeyHandler();
         _getForceUsersHandler = new GetForceUsersHandler();
+        _insertPatrolLogHandler = new InsertPatrolLogHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -212,6 +214,37 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1010, ex, "Error during GetForceUsers");
             return new GetForceUsersResponse();
+        }
+    }
+
+    public override async Task<InsertPatrolLogResponse> InsertPatrolLog(InsertPatrolLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var patrolEventPackage = await _insertPatrolLogHandler.InsertPatrolLog(request.DiscordId, request.GuildId, request.StartDatetime.ToDateTime(), request.EndDatetime.ToDateTime());
+            var response = new InsertPatrolLogResponse();
+            foreach (var key in patrolEventPackage)
+            {
+                Any value;
+                if (key.Value is long intValue)
+                {
+                    value = Any.Pack(new Int64Value { Value = intValue });
+                }
+                else if (key.Value == null)
+                {
+                    value = Any.Pack(new Empty());
+                } else {
+                    continue;
+                }
+
+                response.PatrolReport.Add(key.Key, value);
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1034, ex, "Error during InsertPatrolLog");
+            return new InsertPatrolLogResponse();
         }
     }
 }

@@ -10,7 +10,7 @@ class ConfigManager:
     def get_config(self, guild_id):
         request = database_service_pb2.GetConfigurationKeysRequest(guild_id=guild_id)
         response = self.grpc_client.call_method("DatabaseService", "GetConfigurationKeys", request)
-        keys = handleProtobufUnpacking.unpack(response)
+        keys = handleProtobufUnpacking.unpack(response.keys)
         return keys
 
     def update_key(self, guild_id, key, value):

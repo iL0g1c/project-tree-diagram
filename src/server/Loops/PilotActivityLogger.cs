@@ -194,7 +194,7 @@ class PilotActivityLogger
         // ===============================================================
         try {
             // Get total number of patrols for the force.
-            var update_patrol_events = File.ReadAllText("queries/update_patrol_events.sql");
+            var update_patrol_events = await File.ReadAllTextAsync("queries/update_patrol_events.sql");
 
             connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();

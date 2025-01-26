@@ -74,6 +74,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.GetForceUsersRequest.SerializeToString,
                 response_deserializer=database__service__pb2.GetForceUsersResponse.FromString,
                 _registered_method=True)
+        self.InsertPatrolLog = channel.unary_unary(
+                '/DatabaseService/InsertPatrolLog',
+                request_serializer=database__service__pb2.InsertPatrolLogRequest.SerializeToString,
+                response_deserializer=database__service__pb2.InsertPatrolLogResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -127,6 +132,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def InsertPatrolLog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -169,6 +180,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.GetForceUsers,
                     request_deserializer=database__service__pb2.GetForceUsersRequest.FromString,
                     response_serializer=database__service__pb2.GetForceUsersResponse.SerializeToString,
+            ),
+            'InsertPatrolLog': grpc.unary_unary_rpc_method_handler(
+                    servicer.InsertPatrolLog,
+                    request_deserializer=database__service__pb2.InsertPatrolLogRequest.FromString,
+                    response_serializer=database__service__pb2.InsertPatrolLogResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -387,6 +403,33 @@ class DatabaseService(object):
             '/DatabaseService/GetForceUsers',
             database__service__pb2.GetForceUsersRequest.SerializeToString,
             database__service__pb2.GetForceUsersResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def InsertPatrolLog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/InsertPatrolLog',
+            database__service__pb2.InsertPatrolLogRequest.SerializeToString,
+            database__service__pb2.InsertPatrolLogResponse.FromString,
             options,
             channel_credentials,
             insecure,

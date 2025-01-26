@@ -2,11 +2,13 @@
 =============================
 FEATURES
 --------
+/patrolling manual_log (allows for manually logging a patrol)
 
 CHANGES
 -------
 Fixed async warnings in backend server.
 Centralized error handler in server backend.
+Event ID now displays in patrol logs.
 
 BUG FIXES
 ---------

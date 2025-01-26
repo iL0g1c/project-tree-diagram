@@ -1,12 +1,18 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import datetime
+import pytz
+from proto import database_service_pb2
 import utils.validateUser as validateUser
+import utils.GrpcClient as GrpcClient
+import utils.handleProtobufUnpacking as handleProtobufUnpacking
 
 
 class Patrolling(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.grpc_client = GrpcClient.GrpcClient()
     
     patrolling_group = app_commands.Group(name="patrolling", description="GeoFS Patrolling Commands")
 
@@ -17,6 +23,7 @@ class Patrolling(commands.Cog):
         day="Day of start date for patrol acceptance."
     )
     async def inactive_pilots(self, interaction: discord.Interaction, year: str, month: str, day: str):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
             await interaction.response.send_message("This command has not been implemented.")
@@ -30,7 +37,7 @@ class Patrolling(commands.Cog):
     async def kill(self, interaction: discord.Interaction):
         await interaction.response.send_message("This command has not been implemented.", ephemeral=True)
 
-    @patrolling_group.command(name="log", description="Manually log a patrol.")
+    @patrolling_group.command(name="manual_log", description="Manually log a patrol.")
     @app_commands.describe(
         start_year="Year of the start of the patrol.",
         start_month="Month of the start of the patrol.",
@@ -42,7 +49,37 @@ class Patrolling(commands.Cog):
     async def log_patrol(self, interaction: discord.Interaction, start_year: int, start_month: int, start_day: int, start_hour: int, start_minute: int, patrol_duration: int):
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
+            start_time = datetime.datetime(start_year, start_month, start_day, start_hour, start_minute)
+            end_time = start_time + datetime.timedelta(minutes=patrol_duration)
+            request = database_service_pb2.InsertPatrolLogRequest(
+                discord_id=interaction.user.id,
+                guild_id=interaction.guild.id,
+                start_datetime=start_time,
+                end_datetime=end_time
+            )
+            response = self.grpc_client.call_method("DatabaseService", "InsertPatrolLog", request)
+            patrol_report = handleProtobufUnpacking.unpack(response.patrol_report)
+            if patrol_report["response_code"] == 0:
+                embed = discord.Embed(
+                    title="Patrol Event",
+                    description=f"{interaction.user.mention} has completed a patrol!",
+                    color=discord.Color.blurple()
+                )
+                start_time = start_time.astimezone(pytz.timezone("UTC"))
+                start_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
+                end_time = end_time.astimezone(pytz.timezone("UTC"))
+                end_time = end_time.strftime("%Y-%m-%d %H:%M:%S")
+                embed.add_field(name="Event ID", value=patrol_report["event_id"])
+                embed.add_field(name="Patrol Count", value=patrol_report["patrol_count"])
+                embed.add_field(name="Start Time", value=f"{start_time} UTC")
+                embed.add_field(name="End Time", value=f"{end_time} UTC")
+                embed.add_field(name="Duration", value=f"{patrol_duration} minutes")
+                channel = self.bot.get_channel(patrol_report["patrol_log_channel_id"])
+                if channel:
+                    await channel.send(embed=embed)
+                await interaction.response.send_message("Patrol logged successfully.")
+            elif (patrol_report["response_code"] == 1):
+                await interaction.response.send_message("This user is not part of your force.")
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")
