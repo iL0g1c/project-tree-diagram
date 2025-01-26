@@ -1,12 +1,11 @@
-0.3.1-beta
+0.4.0-beta
 =============================
+FEATURES
+--------
+
 CHANGES
 -------
-Deleted command to log when you disable an bogey.
-Backend optimizations including: better handling of grpc connections.
+Fixed async warnings in backend server.
 
 BUG FIXES
 ---------
-TD0002: Patrol sub commands were not being created properly.
-TD0003: Patrol events were still being logged if pilot wasn't in proper callsign.
-TD0004: When Tree Diagram detects an account for the first time an online event is generated.

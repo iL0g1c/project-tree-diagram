@@ -10,15 +10,16 @@ using System.Diagnostics;
 
 public class MapApiProcessor
 {
-    private readonly HttpClient _httpClient;
+    private static readonly HttpClient _httpClient = new HttpClient();
     private bool _isRunning;
     private DatabaseLayer _databaseLayer;
 
     public MapApiProcessor()
     {
-        _httpClient = new HttpClient();
         _isRunning = false;
         _databaseLayer = new DatabaseLayer();
+
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "Tree Diagram Backends");
     }
 
     public async Task Start()
