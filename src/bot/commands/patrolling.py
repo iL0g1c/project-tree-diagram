@@ -7,19 +7,9 @@ import utils.validateUser as validateUser
 class Patrolling(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    patrolling_group = app_commands.Group(name="patrolling", description="GeoFS Patrolling Commands")
-    @patrolling_group.command(name="disable", description="Log a disable.")
-    async def disable(self, interaction: discord.Interaction):
-        user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
-        if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
     
+    patrolling_group = app_commands.Group(name="patrolling", description="GeoFS Patrolling Commands")
+
     @patrolling_group.command(name="inactive", description="Get inactive pilots since a specified date.")
     @app_commands.describe(
         year="Year of start date for patrol acceptance.",

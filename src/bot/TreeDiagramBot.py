@@ -1,5 +1,4 @@
 import discord
-from discord import app_commands
 from discord.ext import commands
 from discord.utils import escape_markdown
 from discord.ext import tasks
@@ -9,15 +8,13 @@ import asyncio
 import os
 import logging
 import sys
-import grpc
+from proto import database_service_pb2
 import threading
 import random
 import string
 from flask import Flask, request, jsonify
-
-from proto import database_service_pb2_grpc
-from proto import database_service_pb2
 from utils.configManager import ConfigManager
+import utils.GrpcClient as GrpcClient
 
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
@@ -32,6 +29,8 @@ class TreeDiagram(commands.Bot):
         self.logger.addHandler(console_handler)
 
         intents = discord.Intents.all()
+
+        self.grpc_client = GrpcClient.GrpcClient()
         super().__init__(command_prefix="=", intents=intents)
 
     async def on_ready(self):
@@ -59,14 +58,12 @@ class TreeDiagram(commands.Bot):
             await self.load_extension(f"commands.{extension}")
 
     async def on_guild_join(self, guild):
-        with grpc.insecure_channel(self.configManager.host) as channel:
-            stub = database_service_pb2_grpc.DatabaseServiceStub(channel)
-            request = database_service_pb2.InsertNewGuildRequest(guild_id=int(guild.id))
-            response = stub.InsertNewGuild(request)
-            if response.success:
-                self.logger.log(20, f"Joined guild: {guild.name}")
-            else:
-                self.logger.log(40, f"Failed guild setup: {guild.name}")
+        request = database_service_pb2.GetConfigurationKeysRequest(guild_id=guild.id)
+        response = self.grpc_client.call_method("DatabaseService", "InsertNewGuild", request)
+        if response.success:
+            self.logger.log(20, f"Joined guild: {guild.name}")
+        else:
+            self.logger.log(40, f"Failed guild setup: {guild.name}")
 
     @tasks.loop(time=datetime.time(hour=0, minute=0, second=0))
     async def update_callsign_code(self):
