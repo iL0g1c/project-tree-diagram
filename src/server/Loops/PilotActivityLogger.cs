@@ -62,7 +62,7 @@ class PilotActivityLogger
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error Code: 21 | Failed to update users going online: {ex.Message}");
+            ErrorHandler.LogError(1027, ex, "Failed to update users going online.");
             return;
         }
 
@@ -109,7 +109,7 @@ class PilotActivityLogger
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error Code: 22 | Failed to update users going offline: {ex.Message}");
+            ErrorHandler.LogError(1028, ex, "Failed to update users going offline.");
             return;
         }
         // ===============================================================
@@ -163,7 +163,7 @@ class PilotActivityLogger
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error Code: 23 | Failed to package data for Discord bot: {ex.Message}");
+            ErrorHandler.LogError(1029, ex, "Failed to package data for Discord bot.");
             return;
         }
 
@@ -180,13 +180,13 @@ class PilotActivityLogger
                 var response = await httpClient.PostAsync("http://localhost:5001/player-activity-change", content);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"Error Code: 19 | Failed to send activity updates to Discord bot: {response.StatusCode}");
+                    Console.WriteLine($"Failed to send activity updates to Discord bot: {response.StatusCode}");
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error Code: 20 | Failed to send activity updates to Discord bot: {ex.Message}");
+            ErrorHandler.LogError(1030, ex, "Failed to send activity updates to Discord bot.");
             return;
         }
         // ===============================================================
@@ -240,7 +240,7 @@ class PilotActivityLogger
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error Code: 24 | Failed to send patrol events to database and package data for discord bot: {ex.Message}");
+            ErrorHandler.LogError(1031, ex, "Failed to send patrol events to database and package data for Discord bot.");
             return;
         }
         finally
@@ -260,13 +260,13 @@ class PilotActivityLogger
                 var response = await httpClient.PostAsync("http://localhost:5001/patrol-event", content);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"Error Code: 25 | Failed to send patrol events to Discord bot: {response.StatusCode}");
+                    Console.WriteLine($"Failed to send patrol events to Discord bot: {response.StatusCode}");
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error Code: 25 | Failed to send patrol events to Discord bot: {ex.Message}");
+            ErrorHandler.LogError(1032, ex, "Failed to send patrol events to Discord bot.");
             return;
         }
     }

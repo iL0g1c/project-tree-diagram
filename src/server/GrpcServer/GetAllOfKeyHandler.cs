@@ -31,9 +31,9 @@ class GetAllOfKeyHandler
             }
             return results;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 9: {e.Message}");
+            ErrorHandler.LogError(1011, ex, "Error during GetAllOfKey");
             return new Dictionary<Int64, object?>();
         }
     }

@@ -33,9 +33,9 @@ class UpdateUserForceCodeHandler
 
             return true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 6: {e.Message}");
+            ErrorHandler.LogError(1018, ex, "Error during UpdateUserForceCode");
             return false;
         }
     }

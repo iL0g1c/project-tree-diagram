@@ -35,9 +35,9 @@ class GetConfigurationKeysHandler
             Console.WriteLine($"Configuration Keys: {results}");
             return results;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 4: {e.Message}");
+            ErrorHandler.LogError(1012, ex, "Error during GetConfigurationKeys");
             return new Dictionary<object,object>();
         }
     }

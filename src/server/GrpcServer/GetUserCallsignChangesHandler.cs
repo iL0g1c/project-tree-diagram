@@ -33,9 +33,9 @@ class GetUserCallsignChangesHandler
             }
             return results;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 3: {e.Message}");
+            ErrorHandler.LogError(1014, ex, "Error during GetCallsignChangesEvents");
             return new List<(DateTime, string, string)>();
         }
         

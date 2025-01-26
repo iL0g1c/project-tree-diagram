@@ -46,9 +46,9 @@ class UpdateConfigurationKeysHandler
             
             return true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 7: {e.Message}");
+            ErrorHandler.LogError(1017, ex, "Error during UpdateConfigurationKeys");
             return false;
         }
     }

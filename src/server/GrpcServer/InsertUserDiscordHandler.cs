@@ -35,9 +35,9 @@ class InsertUserDiscordIdHandler
                 return false;
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 5: {e.Message}");
+            ErrorHandler.LogError(1016, ex, "Error during InsertUserDiscordId");
             return false;
         }
     }

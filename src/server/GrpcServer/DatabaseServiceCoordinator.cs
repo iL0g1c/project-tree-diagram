@@ -33,9 +33,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 5: {e.Message}");
+            ErrorHandler.LogError(1003, ex, "Error during InsertUserDiscordId");
             return new InsertUserDiscordIdResponse();
         }
     }
@@ -58,9 +58,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             }
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 2: {e.Message}");
+            ErrorHandler.LogError(1004, ex, "Error during GetUserCallsignChanges");
             return new UserCallsignChangesResponse();
         }
     }
@@ -74,9 +74,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 3: {e.Message}");
+            ErrorHandler.LogError(1005, ex, "Error during UpdateUserForceCode");
             return new UpdateUserForceCodeResponse();
         }
     }
@@ -90,9 +90,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 4: {e.Message}");
+            ErrorHandler.LogError(1006, ex, "Error during InsertNewGuild");
             return new InsertNewGuildResponse();
         }
     }
@@ -130,9 +130,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             }
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 8: {e.Message}");
+            ErrorHandler.LogError(1007, ex, "Error during GetConfigurationKeys");
             return new GetConfigurationKeysResponse();
         }
     }
@@ -145,9 +145,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 7: {e.Message}");
+            ErrorHandler.LogError(1008, ex, "Error during UpdateConfigurationKeys");
             return new UpdateConfigurationKeysResponse();
         }
     }
@@ -184,9 +184,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             }
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 18: {e.Message}");
+            ErrorHandler.LogError(1009, ex, "Error during GetAllOfKey");
             return new GetAllOfKeyResponse();
         }
     }
@@ -208,9 +208,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 25: {e.Message}");
+            ErrorHandler.LogError(1010, ex, "Error during GetForceUsers");
             return new GetForceUsersResponse();
         }
     }

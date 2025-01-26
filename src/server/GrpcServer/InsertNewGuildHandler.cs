@@ -24,9 +24,9 @@ class InsertNewGuildHandler
             
             return true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 5: {e.Message}");
+            ErrorHandler.LogError(1015, ex, "Error during InsertNewGuild");
             return false;
         }
     }

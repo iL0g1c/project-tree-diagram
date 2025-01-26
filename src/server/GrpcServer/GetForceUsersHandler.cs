@@ -32,9 +32,9 @@ class GetForceUsersHandler
             Console.WriteLine($"Force Users: {results}");
             return results;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 24: {e.Message}");
+            ErrorHandler.LogError(1013, ex, "Error during GetForceUsers");
             return new List<(Int64, Int64)>();
         }
     }

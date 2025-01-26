@@ -6,6 +6,7 @@ FEATURES
 CHANGES
 -------
 Fixed async warnings in backend server.
+Centralized error handler in server backend.
 
 BUG FIXES
 ---------
