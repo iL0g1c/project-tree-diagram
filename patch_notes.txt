@@ -3,6 +3,7 @@
 FEATURES
 --------
 /patrolling manual_log (allows for manually logging a patrol)
+/patrolling patrol-delete (allows for deleting a patrol)
 
 CHANGES
 -------
