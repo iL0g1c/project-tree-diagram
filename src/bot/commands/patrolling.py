@@ -47,6 +47,7 @@ class Patrolling(commands.Cog):
         patrol_duration="Duration of the patrol in MINUTES."
     )
     async def log_patrol(self, interaction: discord.Interaction, start_year: int, start_month: int, start_day: int, start_hour: int, start_minute: int, patrol_duration: int):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
             start_time = datetime.datetime(start_year, start_month, start_day, start_hour, start_minute)
@@ -77,14 +78,14 @@ class Patrolling(commands.Cog):
                 channel = self.bot.get_channel(patrol_report["patrol_log_channel_id"])
                 if channel:
                     await channel.send(embed=embed)
-                await interaction.response.send_message("Patrol logged successfully.")
+                await interaction.followup.send("Patrol logged successfully.")
             elif (patrol_report["response_code"] == 1):
-                await interaction.response.send_message("This user is not part of your force.")
+                await interaction.followup.send("This patrol overlaps with another patrol.")
         else:
             if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
+                await interaction.followup.send("You do not have permission to use this command.")
             else:
-                await interaction.response.send_message(user_role_check[1])
+                await interaction.followup.send(user_role_check[1])
 
     @patrolling_group.command(name="online", description="Get online pilots from discord.")
     async def online_pilots(self, interaction: discord.Interaction):
@@ -98,16 +99,25 @@ class Patrolling(commands.Cog):
                 await interaction.response.send_message(user_role_check[1])
 
     @patrolling_group.command(name="patrol-delete", description="Delete a patrol.")
-    @app_commands.describe(user="Pilot user.", number="Number of the Patrol to delete.")
-    async def delete_patrol(self, interaction: discord.Interaction, user: discord.Member, number: int):
+    @app_commands.describe(event_id="ID of the patrol to delete.")
+    async def delete_patrol(self, interaction: discord.Interaction, event_id: int):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
+            request = database_service_pb2.DeletePatrolLogRequest(
+                event_id=event_id,
+                guild_id=interaction.guild.id
+            )
+            response = self.grpc_client.call_method("DatabaseService", "DeletePatrolLog", request)
+            if response.response_code == 0:
+                await interaction.followup.send("Patrol deleted successfully.")
+            elif response.response_code == 1:
+                await interaction.followup.send("This patrol does not exist in your forces database.")
         else:
             if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
+                await interaction.followup.send("You do not have permission to use this command.")
             else:
-                await interaction.response.send_message(user_role_check[1])
+                await interaction.followup.send(user_role_check[1])
 
     @patrolling_group.command(name="patrol-report-role",
                         description="Get a report on patrols done by a specific role since a specified date.")

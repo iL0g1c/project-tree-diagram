@@ -52,7 +52,6 @@ class TreeDiagram(commands.Bot):
 
         self.logger.log(20, "Connecting to discord...")
 
-
     async def _load_cogs(self) -> None:
         for extension in ("configuration", "force", "intelligence", "patrolling"):
             await self.load_extension(f"commands.{extension}")

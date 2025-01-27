@@ -12,6 +12,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetAllOfKeyHandler _getAllOfKeyHandler;
     private readonly GetForceUsersHandler _getForceUsersHandler;
     private readonly InsertPatrolLogHandler _insertPatrolLogHandler;
+    private readonly DeletePatrolLogHandler _deletePatrolLogHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -24,6 +25,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getAllOfKeyHandler = new GetAllOfKeyHandler();
         _getForceUsersHandler = new GetForceUsersHandler();
         _insertPatrolLogHandler = new InsertPatrolLogHandler();
+        _deletePatrolLogHandler = new DeletePatrolLogHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -245,6 +247,22 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1034, ex, "Error during InsertPatrolLog");
             return new InsertPatrolLogResponse();
+        }
+    }
+
+    public override async Task<DeletePatrolLogResponse> DeletePatrolLog(DeletePatrolLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var response_code = await _deletePatrolLogHandler.DeletePatrolLog(request.EventId, request.GuildId);
+            var response = new DeletePatrolLogResponse();
+            response.ResponseCode = response_code;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1035, ex, "Error during DeletePatrolLog");
+            return new DeletePatrolLogResponse();
         }
     }
 }

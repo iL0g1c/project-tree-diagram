@@ -14,7 +14,7 @@ class InsertPatrolLogHandler
     {
         try
         {
-            var update_patrol_events = await File.ReadAllTextAsync("queries/update_patrol_events_manual.sql");
+            var update_patrol_events = await File.ReadAllTextAsync("queries/insert_patrol_events_manual.sql");
             var patrol_event_package = new Dictionary<string, object?>();
 
             var connection = new NpgsqlConnection(connectionString);

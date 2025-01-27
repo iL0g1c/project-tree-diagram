@@ -14,6 +14,7 @@ service DatabaseService {
     rpc GetAllOfKey (GetAllOfKeyRequest) returns (GetAllOfKeyResponse);
     rpc GetForceUsers (GetForceUsersRequest) returns (GetForceUsersResponse);
     rpc InsertPatrolLog (InsertPatrolLogRequest) returns (InsertPatrolLogResponse);
+    rpc DeletePatrolLog (DeletePatrolLogRequest) returns (DeletePatrolLogResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -114,4 +115,15 @@ message InsertPatrolLogRequest {
 
 message InsertPatrolLogResponse {
     map<string, google.protobuf.Any> patrol_report = 1;
+}
+
+message DeletePatrolLogRequest {
+    int64 event_id = 1;
+    int64 guild_id = 2;
+}
+
+message DeletePatrolLogResponse {
+    int64 response_code = 1;
+    // 0: Success
+    // 1: Your force doesn't control this event.
 }
