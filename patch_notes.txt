@@ -4,12 +4,14 @@ FEATURES
 --------
 /patrolling manual_log (allows for manually logging a patrol)
 /patrolling patrol-delete (allows for deleting a patrol)
+/patrolling patrol-report (allows for getting all patrols after a specified date)
 
 CHANGES
 -------
 Fixed async warnings in backend server.
 Centralized error handler in server backend.
 Event ID now displays in patrol logs.
+Deleted unused /patrolling patrol-report-role command.
 
 BUG FIXES
 ---------

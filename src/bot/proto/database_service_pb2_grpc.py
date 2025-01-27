@@ -84,6 +84,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.DeletePatrolLogRequest.SerializeToString,
                 response_deserializer=database__service__pb2.DeletePatrolLogResponse.FromString,
                 _registered_method=True)
+        self.GetPatrolLogsByDate = channel.unary_unary(
+                '/DatabaseService/GetPatrolLogsByDate',
+                request_serializer=database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetPatrolLogsByDateResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -149,6 +154,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetPatrolLogsByDate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -201,6 +212,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.DeletePatrolLog,
                     request_deserializer=database__service__pb2.DeletePatrolLogRequest.FromString,
                     response_serializer=database__service__pb2.DeletePatrolLogResponse.SerializeToString,
+            ),
+            'GetPatrolLogsByDate': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPatrolLogsByDate,
+                    request_deserializer=database__service__pb2.GetPatrolLogsByDateRequest.FromString,
+                    response_serializer=database__service__pb2.GetPatrolLogsByDateResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -473,6 +489,33 @@ class DatabaseService(object):
             '/DatabaseService/DeletePatrolLog',
             database__service__pb2.DeletePatrolLogRequest.SerializeToString,
             database__service__pb2.DeletePatrolLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPatrolLogsByDate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetPatrolLogsByDate',
+            database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
+            database__service__pb2.GetPatrolLogsByDateResponse.FromString,
             options,
             channel_credentials,
             insecure,

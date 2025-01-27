@@ -13,6 +13,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetForceUsersHandler _getForceUsersHandler;
     private readonly InsertPatrolLogHandler _insertPatrolLogHandler;
     private readonly DeletePatrolLogHandler _deletePatrolLogHandler;
+    private readonly GetPatrolLogsByDateHandler _getPatrolLogsByDateHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -26,6 +27,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getForceUsersHandler = new GetForceUsersHandler();
         _insertPatrolLogHandler = new InsertPatrolLogHandler();
         _deletePatrolLogHandler = new DeletePatrolLogHandler();
+        _getPatrolLogsByDateHandler = new GetPatrolLogsByDateHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -263,6 +265,31 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1035, ex, "Error during DeletePatrolLog");
             return new DeletePatrolLogResponse();
+        }
+    }
+
+    public override async Task<GetPatrolLogsByDateResponse> GetPatrolLogsByDate(GetPatrolLogsByDateRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var patrol_reports = await _getPatrolLogsByDateHandler.GetPatrolLogsByDate(request.GuildId, request.TimeFrameStart.ToDateTime());
+            var response = new GetPatrolLogsByDateResponse();
+            foreach (var patrol in patrol_reports)
+            {
+                response.PatrolReports.Add(new PatrolReport
+                {
+                    EventId = (Int64) patrol["event_id"],
+                    DiscordId = (Int64) patrol["discord_id"],
+                    StartDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["start_time"]),
+                    EndDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["end_time"])
+                });
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1037, ex, "Error during GetPatrolLogsByDate");
+            return new GetPatrolLogsByDateResponse();
         }
     }
 }

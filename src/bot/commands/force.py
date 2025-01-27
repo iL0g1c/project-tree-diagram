@@ -19,9 +19,9 @@ class Force(commands.Cog):
 
     @force_group.command(name="register-pilot", description="Register a pilot to your force.")
     async def add_pilot(self, interaction: discord.Interaction, geofs_account_id: int, pilot: discord.Member):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            await interaction.response.defer()
             request = database_service_pb2.UpdateUserForceCodeRequest(
                 geofs_account_id=int(geofs_account_id),
                 discord_id=int(pilot.id),
@@ -40,9 +40,9 @@ class Force(commands.Cog):
 
     @force_group.command(name="get-all-pilots", description="Get all pilots in your force.")
     async def get_all_pilots(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            await interaction.response.defer()
             request = database_service_pb2.GetForceUsersRequest(guild_id=int(interaction.guild.id))
             response = self.grpc_client.call_method("DatabaseService", "GetForceUsers", request)
             if response.users:

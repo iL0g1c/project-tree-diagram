@@ -15,6 +15,7 @@ service DatabaseService {
     rpc GetForceUsers (GetForceUsersRequest) returns (GetForceUsersResponse);
     rpc InsertPatrolLog (InsertPatrolLogRequest) returns (InsertPatrolLogResponse);
     rpc DeletePatrolLog (DeletePatrolLogRequest) returns (DeletePatrolLogResponse);
+    rpc GetPatrolLogsByDate (GetPatrolLogsByDateRequest) returns (GetPatrolLogsByDateResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -124,6 +125,20 @@ message DeletePatrolLogRequest {
 
 message DeletePatrolLogResponse {
     int64 response_code = 1;
-    // 0: Success
-    // 1: Your force doesn't control this event.
+}
+
+message GetPatrolLogsByDateRequest {
+    int64 guild_id = 1;
+    google.protobuf.Timestamp time_frame_start = 2;
+}
+
+message PatrolReport {
+    int64 event_id = 1;
+    int64 discord_id = 2;
+    google.protobuf.Timestamp start_datetime = 3;
+    google.protobuf.Timestamp end_datetime = 4;
+}
+
+message GetPatrolLogsByDateResponse {
+    repeated PatrolReport patrol_reports = 1;
 }

@@ -25,5 +25,5 @@ class ConfigManager:
     def get_all_of_key(self, key_name):
         request = database_service_pb2.GetAllOfKeyRequest(key=key_name)
         response = self.grpc_client.call_method("DatabaseService", "GetAllOfKey", request)
-        keys = handleProtobufUnpacking.unpack(response)
+        keys = handleProtobufUnpacking.unpack(response.keys)
         return keys

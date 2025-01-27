@@ -1,12 +1,14 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord.utils import escape_markdown
 import datetime
 import pytz
 from proto import database_service_pb2
 import utils.validateUser as validateUser
 import utils.GrpcClient as GrpcClient
 import utils.handleProtobufUnpacking as handleProtobufUnpacking
+import utils.paginationEmbed as paginationEmbed
 
 
 class Patrolling(commands.Cog):
@@ -119,24 +121,6 @@ class Patrolling(commands.Cog):
             else:
                 await interaction.followup.send(user_role_check[1])
 
-    @patrolling_group.command(name="patrol-report-role",
-                        description="Get a report on patrols done by a specific role since a specified date.")
-    @app_commands.describe(
-        year="Year of start date for patrol acceptance.",
-        month="Month of start date for patrol acceptance.",
-        day="Day of start date for patrol acceptance."
-    )
-    @app_commands.describe(role="Discord role to get patrol report for.")
-    async def patrol_report_role(self, interaction: discord.Interaction, year: str, month: str, day: str, role: str):
-        user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
-        if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
-
     @patrolling_group.command(
         name="patrol-report",
         description="Get a report on patrols done since a specified date.")
@@ -145,10 +129,41 @@ class Patrolling(commands.Cog):
         month="Month of start date for patrol acceptance.",
         day="Day of start date for patrol acceptance."
     )
-    async def patrol_report(self, interaction: discord.Interaction, year: str, month: str, day: str):
+    async def patrol_report(self, interaction: discord.Interaction, year: int, month: int, day: int):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
+            time_frame_start = datetime.datetime(year, month, day, 0, 0, 0)
+            request = database_service_pb2.GetPatrolLogsByDateRequest(
+                guild_id=interaction.guild.id,
+                time_frame_start=time_frame_start
+            )
+            response = self.grpc_client.call_method("DatabaseService", "GetPatrolLogsByDate", request)
+            if len(response.patrol_reports) > 0:
+                lines = []
+                for patrol_report in response.patrol_reports:
+                    event_id = patrol_report.event_id
+                    discord_user = self.bot.get_user(patrol_report.discord_id)
+
+                    start_datetime = patrol_report.start_datetime.ToDatetime()
+                    end_datetime = patrol_report.end_datetime.ToDatetime()
+
+                    duration = round((end_datetime - start_datetime).total_seconds() / 60)
+                    
+                    start_datetime = start_datetime.astimezone(pytz.timezone("UTC"))
+                    start_datetime = start_datetime.strftime("%Y-%m-%d %H:%M:%S")
+                    end_datetime = end_datetime.astimezone(pytz.timezone("UTC"))
+                    end_datetime = end_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+                    lines.append(f"**{response.patrol_reports.index(patrol_report) + 1}.** **Event ID:** {event_id} \| **User:** {discord_user} \| **Start:** {start_datetime} UTC \| **End:** {end_datetime} UTC \| **Duration:** {duration} minutes")
+
+                embed = paginationEmbed.PaginatedEmbed(
+                    items=lines,
+                    title="Configuration Keys"
+                )
+                await interaction.followup.send(embed=embed.embed, view=embed)
+            else:
+                await interaction.followup.send("No patrol logs for your force in the selected time frame were in the database.")
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")
