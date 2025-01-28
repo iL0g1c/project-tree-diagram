@@ -41,7 +41,7 @@ class CallsignChangeDetection
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error Code: 10 | Failed to load SQL queries: {ex.Message}");
+            ErrorHandler.LogError(1019, ex, "Failed to load SQL queries from files.");
             return;
         }
 
@@ -59,7 +59,7 @@ class CallsignChangeDetection
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Code: 11 | Failed to open connection or begin transaction: {ex.Message}");
+                ErrorHandler.LogError(1020, ex, "Failed to open connection or begin transaction.");
                 return;
             }
 
@@ -86,7 +86,7 @@ class CallsignChangeDetection
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Code: 12 | Failed to bulk-select existing callsigns: {ex.Message}");
+                ErrorHandler.LogError(1021, ex, "Failed to bulk-select existing callsigns.");
                 return;
             }
 
@@ -116,7 +116,7 @@ class CallsignChangeDetection
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Code: 13 | Failed to process in memory, gather changes & upserts: {ex.Message}");
+                ErrorHandler.LogError(1022, ex, "Failed to process in memory, gather changes & upserts.");
                 return;
             }
 
@@ -140,7 +140,7 @@ class CallsignChangeDetection
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Code: 14 | Failed to batch insert callsign changes: {ex.Message}");
+                ErrorHandler.LogError(1023, ex, "Failed to batch insert callsign changes.");
                 return;
             }
 
@@ -167,7 +167,7 @@ class CallsignChangeDetection
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Code: 15 | Failed to batch upsert accounts: {ex.Message}");
+                ErrorHandler.LogError(1024, ex, "Failed to batch upsert accounts.");
                 return;
             }
 
@@ -201,7 +201,7 @@ class CallsignChangeDetection
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Code: 16 | Failed to send new callsign changes to Discord bot: {ex.Message}");
+                ErrorHandler.LogError(1025, ex, "Failed to send new callsign changes to Discord bot.");
                 return;
             }
 
@@ -214,7 +214,7 @@ class CallsignChangeDetection
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Code: 17 | Failed to commit transaction: {ex.Message}");
+                ErrorHandler.LogError(1026, ex, "Failed to commit transaction.");
                 return;
             }
         }

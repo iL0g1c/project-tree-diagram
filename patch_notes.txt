@@ -1,12 +1,21 @@
-0.3.1-beta
+0.4.0-beta
 =============================
+FEATURES
+--------
+/patrolling manual_log (allows for manually logging a patrol)
+/patrolling patrol-delete (allows for deleting a patrol)
+/patrolling patrol-report (allows for getting all patrols after a specified date)
+/patrolling online (Gets all of your forces online pilots)
+/patrolling kill (allows for logging a kill)
+/patrolling kill-delete (allows for deleting a kill)
+
 CHANGES
 -------
-Deleted command to log when you disable an bogey.
-Backend optimizations including: better handling of grpc connections.
+Fixed async warnings in backend server.
+Centralized error handler in server backend.
+Event ID now displays in patrol logs.
+Deleted unused /patrolling patrol-report-role command.
+Deleted unused /patrolling inactive command.
 
 BUG FIXES
 ---------
-TD0002: Patrol sub commands were not being created properly.
-TD0003: Patrol events were still being logged if pilot wasn't in proper callsign.
-TD0004: When Tree Diagram detects an account for the first time an online event is generated.

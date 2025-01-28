@@ -11,6 +11,12 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly UpdateConfigurationKeysHandler _updateConfigurationKeysHandler;
     private readonly GetAllOfKeyHandler _getAllOfKeyHandler;
     private readonly GetForceUsersHandler _getForceUsersHandler;
+    private readonly InsertPatrolLogHandler _insertPatrolLogHandler;
+    private readonly DeletePatrolLogHandler _deletePatrolLogHandler;
+    private readonly GetPatrolLogsByDateHandler _getPatrolLogsByDateHandler;
+    private readonly GetAllOnlinePilotsHandler _getAllOnlinePilotsHandler;
+    private readonly InsertKillLogHandler _insertKillLogHandler;
+    private readonly DeleteKillLogHandler _deleteKillLogHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -22,20 +28,26 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _updateConfigurationKeysHandler = new UpdateConfigurationKeysHandler();
         _getAllOfKeyHandler = new GetAllOfKeyHandler();
         _getForceUsersHandler = new GetForceUsersHandler();
+        _insertPatrolLogHandler = new InsertPatrolLogHandler();
+        _deletePatrolLogHandler = new DeletePatrolLogHandler();
+        _getPatrolLogsByDateHandler = new GetPatrolLogsByDateHandler();
+        _getAllOnlinePilotsHandler = new GetAllOnlinePilotsHandler();
+        _insertKillLogHandler = new InsertKillLogHandler();
+        _deleteKillLogHandler = new DeleteKillLogHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
     {
         try
         {
-            var isSuccessful = _insertUserDiscordIdHandler.InsertUserDiscordId(request.GeofsAccountId, request.DiscordId);
+            var isSuccessful = await _insertUserDiscordIdHandler.InsertUserDiscordId(request.GeofsAccountId, request.DiscordId);
             var response = new InsertUserDiscordIdResponse();
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 5: {e.Message}");
+            ErrorHandler.LogError(1003, ex, "Error during InsertUserDiscordId");
             return new InsertUserDiscordIdResponse();
         }
     }
@@ -44,7 +56,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var events = _getUserCallsignChangesHandler.GetCallsignChangesEvents(request.GeofsAccountId);
+            var events = await _getUserCallsignChangesHandler.GetCallsignChangesEvents(request.GeofsAccountId);
             var response = new UserCallsignChangesResponse();
 
             foreach (var evt in events)
@@ -58,9 +70,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             }
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 2: {e.Message}");
+            ErrorHandler.LogError(1004, ex, "Error during GetUserCallsignChanges");
             return new UserCallsignChangesResponse();
         }
     }
@@ -69,14 +81,14 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _updateUserForceCodeHandler.UpdateUserForceCode(request.GeofsAccountId, request.DiscordId, request.GuildId);
+            var isSuccessful = await _updateUserForceCodeHandler.UpdateUserForceCode(request.GeofsAccountId, request.DiscordId, request.GuildId);
             var response = new UpdateUserForceCodeResponse();
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 3: {e.Message}");
+            ErrorHandler.LogError(1005, ex, "Error during UpdateUserForceCode");
             return new UpdateUserForceCodeResponse();
         }
     }
@@ -85,14 +97,14 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _insertNewGuildHandler.InsertNewGuild(request.GuildId);
+            var isSuccessful = await _insertNewGuildHandler.InsertNewGuild(request.GuildId);
             var response = new InsertNewGuildResponse();
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 4: {e.Message}");
+            ErrorHandler.LogError(1006, ex, "Error during InsertNewGuild");
             return new InsertNewGuildResponse();
         }
     }
@@ -101,7 +113,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var keys = _getConfigurationKeysHandler.GetConfigurationKeys(request.GuildId);
+            var keys = await _getConfigurationKeysHandler.GetConfigurationKeys(request.GuildId);
             var response = new GetConfigurationKeysResponse();
 
             foreach (var key in keys)
@@ -130,9 +142,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             }
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 8: {e.Message}");
+            ErrorHandler.LogError(1007, ex, "Error during GetConfigurationKeys");
             return new GetConfigurationKeysResponse();
         }
     }
@@ -140,14 +152,14 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var isSuccessful = _updateConfigurationKeysHandler.UpdateConfigurationKeys(request.GuildId, request.Key, request.Value);
+            var isSuccessful = await _updateConfigurationKeysHandler.UpdateConfigurationKeys(request.GuildId, request.Key, request.Value);
             var response = new UpdateConfigurationKeysResponse();
             response.Success = isSuccessful;
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 7: {e.Message}");
+            ErrorHandler.LogError(1008, ex, "Error during UpdateConfigurationKeys");
             return new UpdateConfigurationKeysResponse();
         }
     }
@@ -155,7 +167,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var keys = _getAllOfKeyHandler.GetAllOfKey(request.Key);
+            var keys = await _getAllOfKeyHandler.GetAllOfKey(request.Key);
             var response = new GetAllOfKeyResponse();
 
             foreach (var key in keys)
@@ -184,9 +196,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             }
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 18: {e.Message}");
+            ErrorHandler.LogError(1009, ex, "Error during GetAllOfKey");
             return new GetAllOfKeyResponse();
         }
     }
@@ -195,7 +207,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     {
         try
         {
-            var users = _getForceUsersHandler.GetForceUsers(request.GuildId);
+            var users = await _getForceUsersHandler.GetForceUsers(request.GuildId);
             var response = new GetForceUsersResponse();
             foreach (var user in users)
             {
@@ -208,10 +220,141 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
             
             return response;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 25: {e.Message}");
+            ErrorHandler.LogError(1010, ex, "Error during GetForceUsers");
             return new GetForceUsersResponse();
+        }
+    }
+
+    public override async Task<InsertPatrolLogResponse> InsertPatrolLog(InsertPatrolLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var patrolEventPackage = await _insertPatrolLogHandler.InsertPatrolLog(request.DiscordId, request.GuildId, request.StartDatetime.ToDateTime(), request.EndDatetime.ToDateTime());
+            var response = new InsertPatrolLogResponse();
+            foreach (var key in patrolEventPackage)
+            {
+                Any value;
+                if (key.Value is long intValue)
+                {
+                    value = Any.Pack(new Int64Value { Value = intValue });
+                }
+                else if (key.Value == null)
+                {
+                    value = Any.Pack(new Empty());
+                } else {
+                    continue;
+                }
+
+                response.PatrolReport.Add(key.Key, value);
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1034, ex, "Error during InsertPatrolLog");
+            return new InsertPatrolLogResponse();
+        }
+    }
+
+    public override async Task<DeletePatrolLogResponse> DeletePatrolLog(DeletePatrolLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var response_code = await _deletePatrolLogHandler.DeletePatrolLog(request.EventId, request.GuildId);
+            var response = new DeletePatrolLogResponse();
+            response.ResponseCode = response_code;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1035, ex, "Error during DeletePatrolLog");
+            return new DeletePatrolLogResponse();
+        }
+    }
+
+    public override async Task<GetPatrolLogsByDateResponse> GetPatrolLogsByDate(GetPatrolLogsByDateRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var patrol_reports = await _getPatrolLogsByDateHandler.GetPatrolLogsByDate(request.GuildId, request.TimeFrameStart.ToDateTime());
+            var response = new GetPatrolLogsByDateResponse();
+            foreach (var patrol in patrol_reports)
+            {
+                response.PatrolReports.Add(new PatrolReport
+                {
+                    EventId = (Int64) patrol["event_id"],
+                    DiscordId = (Int64) patrol["discord_id"],
+                    StartDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["start_time"]),
+                    EndDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["end_time"])
+                });
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1037, ex, "Error during GetPatrolLogsByDate");
+            return new GetPatrolLogsByDateResponse();
+        }
+    }
+
+    public override async Task<GetAllOnlinePilotsResponse> GetAllOnlinePilots(GetAllOnlinePilotsRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var online_users = await _getAllOnlinePilotsHandler.GetAllOnlinePilots(request.GuildId);
+            var response = new GetAllOnlinePilotsResponse();
+            response.DiscordIds.AddRange(online_users);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1039, ex, "Error during GetAllOnlinePilots");
+            return new GetAllOnlinePilotsResponse();
+        }
+    }
+
+    public override async Task<InsertKillLogResponse> InsertKillLog(InsertKillLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var killLog = await _insertKillLogHandler.InsertKillLog(request.DiscordId, request.GuildId);
+            var response = new InsertKillLogResponse();
+            if (killLog.Item1 != -1)
+            {
+                response.EventId = killLog.Item1;
+                response.Timestamp = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)killLog.Item2);
+                response.KillCount = killLog.Item3;
+            }
+            else
+            {
+                response.EventId = killLog.Item1;
+                response.Timestamp = Timestamp.FromDateTime(DateTime.MinValue.ToUniversalTime());
+                response.KillCount = killLog.Item3;
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1041, ex, "Error during InsertKillLog");
+            return new InsertKillLogResponse();
+        }
+    }
+
+    public override async Task<DeleteKillLogResponse> DeleteKillLog(DeleteKillLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var response_code = await _deleteKillLogHandler.DeleteKillLog(request.EventId, request.GuildId);
+            var response = new DeleteKillLogResponse();
+            response.ResponseCode = response_code;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1043, ex, "Error during DeleteKillLog");
+            return new DeleteKillLogResponse();
         }
     }
 }

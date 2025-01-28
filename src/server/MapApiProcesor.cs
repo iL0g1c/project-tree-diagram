@@ -10,15 +10,16 @@ using System.Diagnostics;
 
 public class MapApiProcessor
 {
-    private readonly HttpClient _httpClient;
+    private static readonly HttpClient _httpClient = new HttpClient();
     private bool _isRunning;
     private DatabaseLayer _databaseLayer;
 
     public MapApiProcessor()
     {
-        _httpClient = new HttpClient();
         _isRunning = false;
         _databaseLayer = new DatabaseLayer();
+
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "Tree Diagram Backends");
     }
 
     public async Task Start()
@@ -47,9 +48,9 @@ public class MapApiProcessor
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine($"Error during processing: {e.Message}");
+                ErrorHandler.LogError(1001, ex, "Error during the processing of Map API data.");
             }
         }
     }
@@ -99,7 +100,7 @@ public class MapApiProcessor
                         {
                             var acid = user.GetProperty("acid").GetInt32();
                             var callsign = user.GetProperty("cs").GetString() ?? string.Empty;
-                            // Debug.WriteLine($"Processing User - ACID: {acid}, Callsign: {callsign}");
+
                             return new User
                             {
                                 acid = acid,
@@ -112,10 +113,9 @@ public class MapApiProcessor
             }
 
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 1: {e.Message}");
-            Console.WriteLine(e.StackTrace);
+            ErrorHandler.LogError(1002, ex, "Error during the retrieval of online users from GeoFS Map API.");
         }
         return new List<User>();
     }

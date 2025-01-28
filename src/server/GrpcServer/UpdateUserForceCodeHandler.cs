@@ -9,37 +9,33 @@ class UpdateUserForceCodeHandler
         connectionString = dbLayer.connectionString;
     }
 
-    public bool UpdateUserForceCode(Int64 geofs_account_id, Int64 discord_id, Int64 guild_id)
+    public async Task<bool> UpdateUserForceCode(Int64 geofs_account_id, Int64 discord_id, Int64 guild_id)
     {
         try
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+            await connection.OpenAsync();
+            string query = await File.ReadAllTextAsync("queries/update_user_force_code.sql");
+
+            using NpgsqlCommand cmd = new NpgsqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@geofs_account_id", geofs_account_id);
+            cmd.Parameters.AddWithValue("@discord_id", discord_id);
+            cmd.Parameters.AddWithValue("@guild_id", guild_id);
+
+            var result = await cmd.ExecuteScalarAsync();
+
+            if (result == null)
             {
-                connection.Open();
-                string query = File.ReadAllText("queries/update_user_force_code.sql");
-
-                using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@geofs_account_id", geofs_account_id);
-                    cmd.Parameters.AddWithValue("@discord_id", discord_id);
-                    cmd.Parameters.AddWithValue("@guild_id", guild_id);
-
-                    var result = cmd.ExecuteScalar();
-
-                    if (result == null)
-                    {
-                        Console.WriteLine("No account found with the provided geofs_account_id.");
-                        return false;
-                    }
-                    Console.WriteLine($"Force code updated for geofs_account_id: {result}");
-                }
-
+                Console.WriteLine("No account found with the provided geofs_account_id.");
+                return false;
             }
+            Console.WriteLine($"Force code updated for geofs_account_id: {result}");
+
             return true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 6: {e.Message}");
+            ErrorHandler.LogError(1018, ex, "Error during UpdateUserForceCode");
             return false;
         }
     }

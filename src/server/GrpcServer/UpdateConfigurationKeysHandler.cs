@@ -10,7 +10,7 @@ class UpdateConfigurationKeysHandler
         connectionString = dbLayer.connectionString;
     }
 
-    public bool UpdateConfigurationKeys(Int64 guild_id, string key, string value)
+    public async Task<bool> UpdateConfigurationKeys(Int64 guild_id, string key, string value)
     {
         try
         {
@@ -31,28 +31,24 @@ class UpdateConfigurationKeysHandler
             {
                 typedValue = value;
             }
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-            {
-                connection.Open();
-                string queryTemplate = File.ReadAllText("queries/update_configuration_keys.sql");
-                string query = queryTemplate.Replace("@key", key);
+            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+            await connection.OpenAsync();
+            string queryTemplate = await File.ReadAllTextAsync("queries/update_configuration_keys.sql");
+            string query = queryTemplate.Replace("@key", key);
 
-                using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@guild_id", guild_id);
-                    cmd.Parameters.AddWithValue("@value", typedValue ?? DBNull.Value);
+            using NpgsqlCommand cmd = new NpgsqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@guild_id", guild_id);
+            cmd.Parameters.AddWithValue("@value", typedValue ?? DBNull.Value);
 
-                    var result = cmd.ExecuteScalar();
+            var result = await cmd.ExecuteScalarAsync();
 
-                    Console.WriteLine($"Configuration key updated for guild_id: {result}");
-                }
-
-            }
+            Console.WriteLine($"Configuration key updated for guild_id: {result}");
+            
             return true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error Code 7: {e.Message}");
+            ErrorHandler.LogError(1017, ex, "Error during UpdateConfigurationKeys");
             return false;
         }
     }

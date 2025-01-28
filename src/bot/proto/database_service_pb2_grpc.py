@@ -74,6 +74,36 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.GetForceUsersRequest.SerializeToString,
                 response_deserializer=database__service__pb2.GetForceUsersResponse.FromString,
                 _registered_method=True)
+        self.InsertPatrolLog = channel.unary_unary(
+                '/DatabaseService/InsertPatrolLog',
+                request_serializer=database__service__pb2.InsertPatrolLogRequest.SerializeToString,
+                response_deserializer=database__service__pb2.InsertPatrolLogResponse.FromString,
+                _registered_method=True)
+        self.DeletePatrolLog = channel.unary_unary(
+                '/DatabaseService/DeletePatrolLog',
+                request_serializer=database__service__pb2.DeletePatrolLogRequest.SerializeToString,
+                response_deserializer=database__service__pb2.DeletePatrolLogResponse.FromString,
+                _registered_method=True)
+        self.GetPatrolLogsByDate = channel.unary_unary(
+                '/DatabaseService/GetPatrolLogsByDate',
+                request_serializer=database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetPatrolLogsByDateResponse.FromString,
+                _registered_method=True)
+        self.GetAllOnlinePilots = channel.unary_unary(
+                '/DatabaseService/GetAllOnlinePilots',
+                request_serializer=database__service__pb2.GetAllOnlinePilotsRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetAllOnlinePilotsResponse.FromString,
+                _registered_method=True)
+        self.InsertKillLog = channel.unary_unary(
+                '/DatabaseService/InsertKillLog',
+                request_serializer=database__service__pb2.InsertKillLogRequest.SerializeToString,
+                response_deserializer=database__service__pb2.InsertKillLogResponse.FromString,
+                _registered_method=True)
+        self.DeleteKillLog = channel.unary_unary(
+                '/DatabaseService/DeleteKillLog',
+                request_serializer=database__service__pb2.DeleteKillLogRequest.SerializeToString,
+                response_deserializer=database__service__pb2.DeleteKillLogResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -127,6 +157,42 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def InsertPatrolLog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeletePatrolLog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPatrolLogsByDate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllOnlinePilots(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InsertKillLog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteKillLog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -169,6 +235,36 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.GetForceUsers,
                     request_deserializer=database__service__pb2.GetForceUsersRequest.FromString,
                     response_serializer=database__service__pb2.GetForceUsersResponse.SerializeToString,
+            ),
+            'InsertPatrolLog': grpc.unary_unary_rpc_method_handler(
+                    servicer.InsertPatrolLog,
+                    request_deserializer=database__service__pb2.InsertPatrolLogRequest.FromString,
+                    response_serializer=database__service__pb2.InsertPatrolLogResponse.SerializeToString,
+            ),
+            'DeletePatrolLog': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeletePatrolLog,
+                    request_deserializer=database__service__pb2.DeletePatrolLogRequest.FromString,
+                    response_serializer=database__service__pb2.DeletePatrolLogResponse.SerializeToString,
+            ),
+            'GetPatrolLogsByDate': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPatrolLogsByDate,
+                    request_deserializer=database__service__pb2.GetPatrolLogsByDateRequest.FromString,
+                    response_serializer=database__service__pb2.GetPatrolLogsByDateResponse.SerializeToString,
+            ),
+            'GetAllOnlinePilots': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllOnlinePilots,
+                    request_deserializer=database__service__pb2.GetAllOnlinePilotsRequest.FromString,
+                    response_serializer=database__service__pb2.GetAllOnlinePilotsResponse.SerializeToString,
+            ),
+            'InsertKillLog': grpc.unary_unary_rpc_method_handler(
+                    servicer.InsertKillLog,
+                    request_deserializer=database__service__pb2.InsertKillLogRequest.FromString,
+                    response_serializer=database__service__pb2.InsertKillLogResponse.SerializeToString,
+            ),
+            'DeleteKillLog': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteKillLog,
+                    request_deserializer=database__service__pb2.DeleteKillLogRequest.FromString,
+                    response_serializer=database__service__pb2.DeleteKillLogResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -387,6 +483,168 @@ class DatabaseService(object):
             '/DatabaseService/GetForceUsers',
             database__service__pb2.GetForceUsersRequest.SerializeToString,
             database__service__pb2.GetForceUsersResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def InsertPatrolLog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/InsertPatrolLog',
+            database__service__pb2.InsertPatrolLogRequest.SerializeToString,
+            database__service__pb2.InsertPatrolLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeletePatrolLog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/DeletePatrolLog',
+            database__service__pb2.DeletePatrolLogRequest.SerializeToString,
+            database__service__pb2.DeletePatrolLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPatrolLogsByDate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetPatrolLogsByDate',
+            database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
+            database__service__pb2.GetPatrolLogsByDateResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllOnlinePilots(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetAllOnlinePilots',
+            database__service__pb2.GetAllOnlinePilotsRequest.SerializeToString,
+            database__service__pb2.GetAllOnlinePilotsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def InsertKillLog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/InsertKillLog',
+            database__service__pb2.InsertKillLogRequest.SerializeToString,
+            database__service__pb2.InsertKillLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteKillLog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/DeleteKillLog',
+            database__service__pb2.DeleteKillLogRequest.SerializeToString,
+            database__service__pb2.DeleteKillLogResponse.FromString,
             options,
             channel_credentials,
             insecure,

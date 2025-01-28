@@ -48,10 +48,9 @@ class TreeDiagram(commands.Bot):
             synced = await self.tree.sync()
             self.logger.log(20, f"Synced {len(synced)} command(s)")
         except Exception as e:
-            self.logger.log(40,     f"Exception while syncing commands. Error: {e}")
+            self.logger.log(40, f"Exception while syncing commands. Error: {e}")
 
         self.logger.log(20, "Connecting to discord...")
-
 
     async def _load_cogs(self) -> None:
         for extension in ("configuration", "force", "intelligence", "patrolling"):
@@ -173,6 +172,7 @@ def patrol_event():
             duration_str = date_part + '.' + fraction_part
 
         duration = datetime.datetime.strptime(duration_str, "%H:%M:%S.%f")
+        embed.add_field(name="Event ID", value=patrol["event_id"])
         embed.add_field(name="Patrol Count", value=patrol["patrol_count"])
         embed.add_field(name="Start Time", value=start_time.strftime('%m/%d/%Y, %H:%M:%S') + " UTC")
         embed.add_field(name="End Time", value=end_time.strftime('%m/%d/%Y, %H:%M:%S') + " UTC")

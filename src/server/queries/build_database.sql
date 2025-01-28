@@ -32,7 +32,7 @@ CREATE TABLE patrol_event (
     geofs_account_id BIGINT NOT NULL,
     force_code VARCHAR(10) NOT NULL,
     start_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITH TIME ZONE    NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
     CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
         REFERENCES Account (geofs_account_id),
     CONSTRAINT fk_force FOREIGN KEY (force_code)
@@ -50,5 +50,20 @@ CREATE TABLE Forces (
     callsign_change_channel_id BIGINT,
     callsign_code_channel_id BIGINT,
     callsign_code_loop_enabled BOOLEAN,
-    callsign_format VARCHAR(50)
+    callsign_format VARCHAR(50),
+    kill_log_channel_id BIGINT,
 );
+
+CREATE TABLE kill_event (
+    event_id BIGINT PRIMARY KEY DEFAULT nextval('event_id'),
+    geofs_account_id BIGINT NOT NULL,
+    guild_id BIGINT NOT NULL,
+    force_code VARCHAR(10) NOT NULL,
+    detected_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    CONSTRAINT fk_account FOREIGN KEY (geofs_account_id)
+        REFERENCES Account (geofs_account_id),
+    CONSTRAINT fk_guild FOREIGN KEY (guild_id)
+        REFERENCES Forces (guild_id),
+    CONSTRAINT fk_force_code FOREIGN KEY (force_code)
+        REFERENCES Forces (force_code)
+)
