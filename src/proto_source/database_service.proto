@@ -17,6 +17,7 @@ service DatabaseService {
     rpc DeletePatrolLog (DeletePatrolLogRequest) returns (DeletePatrolLogResponse);
     rpc GetPatrolLogsByDate (GetPatrolLogsByDateRequest) returns (GetPatrolLogsByDateResponse);
     rpc GetAllOnlinePilots (GetAllOnlinePilotsRequest) returns (GetAllOnlinePilotsResponse);
+    rpc InsertKillLog (InsertKillLogRequest) returns (InsertKillLogResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -150,4 +151,13 @@ message GetAllOnlinePilotsRequest {
 
 message GetAllOnlinePilotsResponse {
     repeated int64 discord_ids = 1;
+}
+
+message InsertKillLogRequest {
+    int64 discord_id = 1;
+    int64 guild_id = 2;
+}
+
+message InsertKillLogResponse {
+    bool is_success = 1;
 }

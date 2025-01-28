@@ -37,7 +37,14 @@ class Patrolling(commands.Cog):
 
     @patrolling_group.command(name="kill", description="Log a kill.")
     async def kill(self, interaction: discord.Interaction):
-        await interaction.response.send_message("This command has not been implemented.", ephemeral=True)
+        user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
+        if user_role_check[0]:
+            pass
+        else:
+            if user_role_check[1] is None:
+                await interaction.response.send_message("You do not have permission to use this command.")
+            else:
+                await interaction.response.send_message(user_role_check[1])
 
     @patrolling_group.command(name="manual_log", description="Manually log a patrol.")
     @app_commands.describe(
