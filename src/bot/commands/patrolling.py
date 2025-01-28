@@ -19,23 +19,6 @@ class Patrolling(commands.Cog):
     
     patrolling_group = app_commands.Group(name="patrolling", description="GeoFS Patrolling Commands")
 
-    @patrolling_group.command(name="inactive", description="Get inactive pilots since a specified date.")
-    @app_commands.describe(
-        year="Year of start date for patrol acceptance.",
-        month="Month of start date for patrol acceptance.",
-        day="Day of start date for patrol acceptance."
-    )
-    async def inactive_pilots(self, interaction: discord.Interaction, year: str, month: str, day: str):
-        await interaction.response.defer()
-        user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
-        if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
-
     @patrolling_group.command(name="kill", description="Log a kill.")
     async def kill(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -74,6 +57,27 @@ class Patrolling(commands.Cog):
                 await interaction.response.send_message("You do not have permission to use this command.")
             else:
                 await interaction.response.send_message(user_role_check[1])
+
+    @patrolling_group.command(name="kill-delete", description="Delete a kill.")
+    @app_commands.describe(event_id="The event_id listed on the kill log.")
+    async def delete_kill(self, interaction: discord.Interaction, event_id: int):
+        await interaction.response.defer()
+        user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
+        if user_role_check[0]:
+            request = database_service_pb2.DeleteKillLogRequest(
+                event_id=event_id,
+                guild_id=interaction.guild.id
+            )
+            response = self.grpc_client.call_method("DatabaseService", "DeleteKillLog", request)
+            if response.response_code == 0:
+                await interaction.followup.send("Kill deleted successfully.")
+            elif response.response_code == 1:
+                await interaction.followup.send("This kill does not exist in your forces database.")
+        else:
+            if user_role_check[1] is None:
+                await interaction.followup.send("You do not have permission to use this command.")
+            else:
+                await interaction.followup.send(user_role_check[1])
 
     @patrolling_group.command(name="manual_log", description="Manually log a patrol.")
     @app_commands.describe(

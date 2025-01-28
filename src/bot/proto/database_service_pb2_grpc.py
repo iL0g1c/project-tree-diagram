@@ -99,6 +99,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.InsertKillLogRequest.SerializeToString,
                 response_deserializer=database__service__pb2.InsertKillLogResponse.FromString,
                 _registered_method=True)
+        self.DeleteKillLog = channel.unary_unary(
+                '/DatabaseService/DeleteKillLog',
+                request_serializer=database__service__pb2.DeleteKillLogRequest.SerializeToString,
+                response_deserializer=database__service__pb2.DeleteKillLogResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -182,6 +187,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DeleteKillLog(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -249,6 +260,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.InsertKillLog,
                     request_deserializer=database__service__pb2.InsertKillLogRequest.FromString,
                     response_serializer=database__service__pb2.InsertKillLogResponse.SerializeToString,
+            ),
+            'DeleteKillLog': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteKillLog,
+                    request_deserializer=database__service__pb2.DeleteKillLogRequest.FromString,
+                    response_serializer=database__service__pb2.DeleteKillLogResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -602,6 +618,33 @@ class DatabaseService(object):
             '/DatabaseService/InsertKillLog',
             database__service__pb2.InsertKillLogRequest.SerializeToString,
             database__service__pb2.InsertKillLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteKillLog(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/DeleteKillLog',
+            database__service__pb2.DeleteKillLogRequest.SerializeToString,
+            database__service__pb2.DeleteKillLogResponse.FromString,
             options,
             channel_credentials,
             insecure,

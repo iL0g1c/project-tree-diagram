@@ -18,6 +18,7 @@ service DatabaseService {
     rpc GetPatrolLogsByDate (GetPatrolLogsByDateRequest) returns (GetPatrolLogsByDateResponse);
     rpc GetAllOnlinePilots (GetAllOnlinePilotsRequest) returns (GetAllOnlinePilotsResponse);
     rpc InsertKillLog (InsertKillLogRequest) returns (InsertKillLogResponse);
+    rpc DeleteKillLog (DeleteKillLogRequest) returns (DeleteKillLogResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -162,4 +163,13 @@ message InsertKillLogResponse {
     int64 event_id = 1;
     int64 kill_count = 2;
     google.protobuf.Timestamp timestamp = 3;
+}
+
+message DeleteKillLogRequest {
+    int64 event_id = 1;
+    int64 guild_id = 2;
+}
+
+message DeleteKillLogResponse {
+    int64 response_code = 1;
 }

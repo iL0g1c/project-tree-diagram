@@ -16,6 +16,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetPatrolLogsByDateHandler _getPatrolLogsByDateHandler;
     private readonly GetAllOnlinePilotsHandler _getAllOnlinePilotsHandler;
     private readonly InsertKillLogHandler _insertKillLogHandler;
+    private readonly DeleteKillLogHandler _deleteKillLogHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -32,6 +33,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getPatrolLogsByDateHandler = new GetPatrolLogsByDateHandler();
         _getAllOnlinePilotsHandler = new GetAllOnlinePilotsHandler();
         _insertKillLogHandler = new InsertKillLogHandler();
+        _deleteKillLogHandler = new DeleteKillLogHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -337,6 +339,22 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1041, ex, "Error during InsertKillLog");
             return new InsertKillLogResponse();
+        }
+    }
+
+    public override async Task<DeleteKillLogResponse> DeleteKillLog(DeleteKillLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var response_code = await _deleteKillLogHandler.DeleteKillLog(request.EventId, request.GuildId);
+            var response = new DeleteKillLogResponse();
+            response.ResponseCode = response_code;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1043, ex, "Error during DeleteKillLog");
+            return new DeleteKillLogResponse();
         }
     }
 }

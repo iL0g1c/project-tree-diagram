@@ -2,7 +2,6 @@ check what happens when A user logs in as a offduty callsign, changes their call
 
 Cache the config file in grpc server. Update config cache when config is updated, and when config is requested immediately send it.
 
-kill logging (0.4.0)
-kill deleting
+allow for changing configs, so that it doesn't violate foreign key contraints.
 
 setup so that the live and beta backends can run in dual mode.
