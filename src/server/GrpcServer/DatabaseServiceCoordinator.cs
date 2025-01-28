@@ -14,6 +14,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly InsertPatrolLogHandler _insertPatrolLogHandler;
     private readonly DeletePatrolLogHandler _deletePatrolLogHandler;
     private readonly GetPatrolLogsByDateHandler _getPatrolLogsByDateHandler;
+    private readonly GetAllOnlinePilotsHandler _getAllOnlinePilotsHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -28,6 +29,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _insertPatrolLogHandler = new InsertPatrolLogHandler();
         _deletePatrolLogHandler = new DeletePatrolLogHandler();
         _getPatrolLogsByDateHandler = new GetPatrolLogsByDateHandler();
+        _getAllOnlinePilotsHandler = new GetAllOnlinePilotsHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -290,6 +292,22 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1037, ex, "Error during GetPatrolLogsByDate");
             return new GetPatrolLogsByDateResponse();
+        }
+    }
+
+    public override async Task<GetAllOnlinePilotsResponse> GetAllOnlinePilots(GetAllOnlinePilotsRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var online_users = await _getAllOnlinePilotsHandler.GetAllOnlinePilots(request.GuildId);
+            var response = new GetAllOnlinePilotsResponse();
+            response.DiscordIds.AddRange(online_users);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1039, ex, "Error during GetAllOnlinePilots");
+            return new GetAllOnlinePilotsResponse();
         }
     }
 }

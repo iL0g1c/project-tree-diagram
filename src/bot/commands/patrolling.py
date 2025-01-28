@@ -89,11 +89,28 @@ class Patrolling(commands.Cog):
             else:
                 await interaction.followup.send(user_role_check[1])
 
-    @patrolling_group.command(name="online", description="Get online pilots from discord.")
+    @patrolling_group.command(name="online", description="Get online pilots for your force.")
     async def online_pilots(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
+            request = database_service_pb2.GetAllOnlinePilotsRequest(
+                guild_id=interaction.guild.id
+            )
+            response = self.grpc_client.call_method("DatabaseService", "GetAllOnlinePilots", request)
+            if len(response.discord_ids) > 0:
+                lines = []
+                for discord_id in response.discord_ids:
+                    discord_user = self.bot.get_user(discord_id)
+                    lines.append(f"{response.discord_ids.index(discord_id) + 1}. {discord_user.mention}")
+                embed = paginationEmbed.PaginatedEmbed(
+                    items=lines,
+                    title="Online Pilots"
+                )
+                await interaction.followup.send(embed=embed.embed, view=embed)
+            else:
+                await interaction.followup.send("No online pilots for your force were found.")
+
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")

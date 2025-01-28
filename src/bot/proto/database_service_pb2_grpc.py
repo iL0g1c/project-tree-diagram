@@ -89,6 +89,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
                 response_deserializer=database__service__pb2.GetPatrolLogsByDateResponse.FromString,
                 _registered_method=True)
+        self.GetAllOnlinePilots = channel.unary_unary(
+                '/DatabaseService/GetAllOnlinePilots',
+                request_serializer=database__service__pb2.GetAllOnlinePilotsRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetAllOnlinePilotsResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -160,6 +165,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetAllOnlinePilots(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -217,6 +228,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.GetPatrolLogsByDate,
                     request_deserializer=database__service__pb2.GetPatrolLogsByDateRequest.FromString,
                     response_serializer=database__service__pb2.GetPatrolLogsByDateResponse.SerializeToString,
+            ),
+            'GetAllOnlinePilots': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllOnlinePilots,
+                    request_deserializer=database__service__pb2.GetAllOnlinePilotsRequest.FromString,
+                    response_serializer=database__service__pb2.GetAllOnlinePilotsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -516,6 +532,33 @@ class DatabaseService(object):
             '/DatabaseService/GetPatrolLogsByDate',
             database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
             database__service__pb2.GetPatrolLogsByDateResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllOnlinePilots(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetAllOnlinePilots',
+            database__service__pb2.GetAllOnlinePilotsRequest.SerializeToString,
+            database__service__pb2.GetAllOnlinePilotsResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -16,6 +16,7 @@ service DatabaseService {
     rpc InsertPatrolLog (InsertPatrolLogRequest) returns (InsertPatrolLogResponse);
     rpc DeletePatrolLog (DeletePatrolLogRequest) returns (DeletePatrolLogResponse);
     rpc GetPatrolLogsByDate (GetPatrolLogsByDateRequest) returns (GetPatrolLogsByDateResponse);
+    rpc GetAllOnlinePilots (GetAllOnlinePilotsRequest) returns (GetAllOnlinePilotsResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -141,4 +142,12 @@ message PatrolReport {
 
 message GetPatrolLogsByDateResponse {
     repeated PatrolReport patrol_reports = 1;
+}
+
+message GetAllOnlinePilotsRequest {
+    int64 guild_id = 1;
+}
+
+message GetAllOnlinePilotsResponse {
+    repeated int64 discord_ids = 1;
 }
