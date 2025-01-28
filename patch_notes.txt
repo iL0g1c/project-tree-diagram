@@ -7,6 +7,7 @@ FEATURES
 /patrolling patrol-report (allows for getting all patrols after a specified date)
 /patrolling online (Gets all of your forces online pilots)
 /patrolling kill (allows for logging a kill)
+/patrolling kill-delete (allows for deleting a kill)
 
 CHANGES
 -------
