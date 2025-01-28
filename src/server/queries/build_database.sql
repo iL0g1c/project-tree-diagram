@@ -50,7 +50,8 @@ CREATE TABLE Forces (
     callsign_change_channel_id BIGINT,
     callsign_code_channel_id BIGINT,
     callsign_code_loop_enabled BOOLEAN,
-    callsign_format VARCHAR(50)
+    callsign_format VARCHAR(50),
+    kill_log_channel_id BIGINT,
 );
 
 CREATE TABLE kill_event (

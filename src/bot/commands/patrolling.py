@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from discord.utils import escape_markdown
+import asyncio
 import datetime
 import pytz
 from proto import database_service_pb2
@@ -37,9 +38,37 @@ class Patrolling(commands.Cog):
 
     @patrolling_group.command(name="kill", description="Log a kill.")
     async def kill(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            pass
+            request = database_service_pb2.InsertKillLogRequest(
+                discord_id=interaction.user.id,
+                guild_id=interaction.guild.id
+            )
+            response = self.grpc_client.call_method("DatabaseService", "InsertKillLog", request)
+            config = self.bot.configManager.get_config(int(interaction.guild.id))
+            if response.event_id != -1:
+                kill_log_channel = self.bot.get_channel(config["kill_log_channel_id"])
+                if kill_log_channel is None:
+                    await interaction.followup.send("An error occurred. Contact High Command.")
+                    return
+                event_id = response.event_id
+                kill_count = response.kill_count
+                event_time = response.timestamp.ToDatetime()
+                event_time = event_time.strftime("%Y-%m-%d %H:%M:%S")
+                embed = discord.Embed(
+                    title="Kill Event",
+                    description=f"{interaction.user.mention} has earned a kill!",
+                    color=discord.Color.blurple()
+                )
+                embed.add_field(name="Event ID", value=event_id)
+                embed.add_field(name="Kill Count", value=kill_count)
+                embed.add_field(name="Time", value=f"{event_time} UTC")
+
+                asyncio.run_coroutine_threadsafe(kill_log_channel.send(embed=embed), self.bot.loop)
+                await interaction.followup.send("Kill logged successfully.")
+            else:
+                await interaction.followup.send("An error occurred. Contact High Command.")
         else:
             if user_role_check[1] is None:
                 await interaction.response.send_message("You do not have permission to use this command.")

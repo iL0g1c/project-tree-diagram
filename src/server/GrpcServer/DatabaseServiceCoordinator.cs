@@ -15,6 +15,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly DeletePatrolLogHandler _deletePatrolLogHandler;
     private readonly GetPatrolLogsByDateHandler _getPatrolLogsByDateHandler;
     private readonly GetAllOnlinePilotsHandler _getAllOnlinePilotsHandler;
+    private readonly InsertKillLogHandler _insertKillLogHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -30,6 +31,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _deletePatrolLogHandler = new DeletePatrolLogHandler();
         _getPatrolLogsByDateHandler = new GetPatrolLogsByDateHandler();
         _getAllOnlinePilotsHandler = new GetAllOnlinePilotsHandler();
+        _insertKillLogHandler = new InsertKillLogHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -308,6 +310,33 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1039, ex, "Error during GetAllOnlinePilots");
             return new GetAllOnlinePilotsResponse();
+        }
+    }
+
+    public override async Task<InsertKillLogResponse> InsertKillLog(InsertKillLogRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var killLog = await _insertKillLogHandler.InsertKillLog(request.DiscordId, request.GuildId);
+            var response = new InsertKillLogResponse();
+            if (killLog.Item1 != -1)
+            {
+                response.EventId = killLog.Item1;
+                response.Timestamp = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)killLog.Item2);
+                response.KillCount = killLog.Item3;
+            }
+            else
+            {
+                response.EventId = killLog.Item1;
+                response.Timestamp = Timestamp.FromDateTime(DateTime.MinValue.ToUniversalTime());
+                response.KillCount = killLog.Item3;
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1041, ex, "Error during InsertKillLog");
+            return new InsertKillLogResponse();
         }
     }
 }

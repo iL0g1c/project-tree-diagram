@@ -159,5 +159,7 @@ message InsertKillLogRequest {
 }
 
 message InsertKillLogResponse {
-    bool is_success = 1;
+    int64 event_id = 1;
+    int64 kill_count = 2;
+    google.protobuf.Timestamp timestamp = 3;
 }
