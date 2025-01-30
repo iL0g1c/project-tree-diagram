@@ -1,21 +1,16 @@
-0.4.0-beta
+0.4.1-beta
 =============================
 FEATURES
 --------
-/patrolling manual_log (allows for manually logging a patrol)
-/patrolling patrol-delete (allows for deleting a patrol)
-/patrolling patrol-report (allows for getting all patrols after a specified date)
-/patrolling online (Gets all of your forces online pilots)
-/patrolling kill (allows for logging a kill)
-/patrolling kill-delete (allows for deleting a kill)
+/force info command (gets basic info about your force).
+Forces can now set multiple callsign formats.
+/config callsign-filters-get (lists all callsign filters in a force).
+/config callsign-filters-add (allows a force to add a callsign filter).
+/config callsign-filters-remove (allows a force to delete a callsign filter).
 
 CHANGES
 -------
-Fixed async warnings in backend server.
-Centralized error handler in server backend.
-Event ID now displays in patrol logs.
-Deleted unused /patrolling patrol-report-role command.
-Deleted unused /patrolling inactive command.
 
 BUG FIXES
 ---------
+TD0005: Users were unable to change the a forces identifier after setting it initially.

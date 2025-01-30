@@ -2,6 +2,6 @@ check what happens when A user logs in as a offduty callsign, changes their call
 
 Cache the config file in grpc server. Update config cache when config is updated, and when config is requested immediately send it.
 
-allow for changing configs, so that it doesn't violate foreign key contraints.
+patrol joining command (0.4.1)
 
 setup so that the live and beta backends can run in dual mode.

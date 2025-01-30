@@ -17,6 +17,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetAllOnlinePilotsHandler _getAllOnlinePilotsHandler;
     private readonly InsertKillLogHandler _insertKillLogHandler;
     private readonly DeleteKillLogHandler _deleteKillLogHandler;
+    private readonly GetCallsignFiltersHandler _getCallsignFiltersHandler;
+    private readonly InsertCallsignFilterHandler _insertCallsignFilterHandler;
+    private readonly DeleteCallsignFilterHandler _deleteCallsignFilterHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -34,6 +37,9 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getAllOnlinePilotsHandler = new GetAllOnlinePilotsHandler();
         _insertKillLogHandler = new InsertKillLogHandler();
         _deleteKillLogHandler = new DeleteKillLogHandler();
+        _getCallsignFiltersHandler = new GetCallsignFiltersHandler();
+        _insertCallsignFilterHandler = new InsertCallsignFilterHandler();
+        _deleteCallsignFilterHandler = new DeleteCallsignFilterHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -355,6 +361,53 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1043, ex, "Error during DeleteKillLog");
             return new DeleteKillLogResponse();
+        }
+    }
+
+    public override async Task<GetCallsignFiltersResponse> GetCallsignFilters(GetCallsignFiltersRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var callsign_filters = await _getCallsignFiltersHandler.GetCallsignFilters(request.GuildId);
+            var response = new GetCallsignFiltersResponse();
+            response.Filters.AddRange(callsign_filters);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1044, ex, "Error during GetCallsignFilters");
+            return new GetCallsignFiltersResponse();
+        }
+    }
+    public override async Task<InsertCallsignFilterResponse> InsertCallsignFilter(InsertCallsignFilterRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var isSuccessful = await _insertCallsignFilterHandler.InsertCallsignFilter(request.GuildId, request.CallsignFilter);
+            var response = new InsertCallsignFilterResponse();
+            response.Success = isSuccessful;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1046, ex, "Error during InsertCallsignFilter");
+            return new InsertCallsignFilterResponse();
+        }
+    }
+
+    public override async Task<DeleteCallsignFilterResponse> DeleteCallsignFilter(DeleteCallsignFilterRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var isSuccessful = await _deleteCallsignFilterHandler.DeleteCallsignFilter(request.GuildId, request.CallsignFilter);
+            var response = new DeleteCallsignFilterResponse();
+            response.Success = isSuccessful;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1047, ex, "Error during DeleteCallsignFilter");
+            return new DeleteCallsignFilterResponse();
         }
     }
 }

@@ -17,7 +17,7 @@ class PilotActivityLogger
         var users_going_offline = new List<Dictionary<string, object?>>();
         var patrol_events = new List<Dictionary<string, object?>>();
         var valid_users = new List<Dictionary<string, object?>>();
-        Dictionary<Int64, object>callsign_formats  = new Dictionary<Int64, object>();
+        var callsign_filters = new List<string>();
 
         NpgsqlConnection? connection = null;
         // ===============================================================
@@ -113,30 +113,19 @@ class PilotActivityLogger
             return;
         }
         // ===============================================================
-        // 3) Package activty updates for discord bot
+        // 3) Package activity updates for discord bot
         // ===============================================================
         try {
             using (connection = new NpgsqlConnection(_connectionString))
             {
-                connection.Open();
-                string query_template = File.ReadAllText("queries/get_all_of_key.sql");
-                string query = query_template.Replace("@key", "callsign_format");
+                await connection.OpenAsync();
+                string query = await File.ReadAllTextAsync("queries/get_all_callsign_filters.sql");
 
-                using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
+                using NpgsqlCommand cmd = new NpgsqlCommand(query, connection);
+                using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Int64 id = reader.GetInt64(0);
-                            string? username = reader.IsDBNull(1) ? null : reader.GetString(1);
-                            if (username == null)
-                            {
-                                continue;
-                            }
-                            callsign_formats.Add(id, username);
-                        }
-                    }
+                    callsign_filters.Add(reader.GetString(0));
                 }
             }
             foreach (var user in result_list)
@@ -145,19 +134,16 @@ class PilotActivityLogger
                 {
                     continue;
                 }
-                foreach (Int64 guild_id in callsign_formats.Keys.ToList())
+                bool matches = callsign_filters.Any(filter =>
                 {
-                    string? callsign_format = callsign_formats[guild_id].ToString();
-                    if (callsign_format == null || user["callsign"] == null)
-                    {
-                        continue;
-                    }
-                    string regex_pattern = callsign_format.Replace("[", "\\[").Replace("]", "\\]").Replace("X", ".");
+                    string regex_pattern = filter.Replace("[", "\\[").Replace("]", "\\]").Replace("X", ".");
                     Regex regex = new Regex(".*" + regex_pattern + ".*", RegexOptions.IgnoreCase);
-                    if (regex.IsMatch(user["callsign"].ToString()))
-                    {
-                        valid_users.Add(user);
-                    }
+                    return regex.IsMatch(user["callsign"].ToString() ?? "");
+                });
+
+                if (matches)
+                {
+                    valid_users.Add(user);
                 }
             }
         }
@@ -205,7 +191,6 @@ class PilotActivityLogger
 
                 var end_time = DateTime.UtcNow;
                 var patrol_event_package = new Dictionary<string, object?>();
-                string callsign_format = "";
                 
                 using (var command = new NpgsqlCommand(update_patrol_events, connection))
                 {
@@ -221,7 +206,6 @@ class PilotActivityLogger
                         patrol_event_package["event_id"] = reader.GetInt64(reader.GetOrdinal("event_id"));
                         patrol_event_package["patrol_log_channel_id"] = reader["patrol_log_channel_id"];
                         patrol_event_package["patrol_count"] = (Int64) reader["patrol_count"] + 1;
-                        callsign_format = reader["callsign_format"].ToString() ?? "";
                     }
                 }
 
@@ -230,9 +214,14 @@ class PilotActivityLogger
                 patrol_event_package["duration"] = (DateTime)patrol_event_package["end_time"] - (DateTime)patrol_event_package["start_time"];
 
 
-                string regex_pattern = callsign_format.Replace("[", "\\[").Replace("]", "\\]").Replace("X", ".");
-                Regex regex = new Regex(".*" + regex_pattern + ".*", RegexOptions.IgnoreCase);
-                if (regex.IsMatch(user["callsign"].ToString() ?? ""))
+                bool matches = callsign_filters.Any(filter =>
+                {
+                    string regex_pattern = filter.Replace("[", "\\[").Replace("]", "\\]").Replace("X", ".");
+                    Regex regex = new Regex(".*" + regex_pattern + ".*", RegexOptions.IgnoreCase);
+                    return regex.IsMatch(user["callsign"].ToString() ?? "");
+                });
+
+                if (matches)
                 {
                     patrol_events.Add(patrol_event_package);
                 }

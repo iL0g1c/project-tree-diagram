@@ -19,6 +19,9 @@ service DatabaseService {
     rpc GetAllOnlinePilots (GetAllOnlinePilotsRequest) returns (GetAllOnlinePilotsResponse);
     rpc InsertKillLog (InsertKillLogRequest) returns (InsertKillLogResponse);
     rpc DeleteKillLog (DeleteKillLogRequest) returns (DeleteKillLogResponse);
+    rpc GetCallsignFilters (GetCallsignFiltersRequest) returns (GetCallsignFiltersResponse);
+    rpc InsertCallsignFilter (InsertCallsignFilterRequest) returns (InsertCallsignFilterResponse);
+    rpc DeleteCallsignFilter (DeleteCallsignFilterRequest) returns (DeleteCallsignFilterResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -172,4 +175,30 @@ message DeleteKillLogRequest {
 
 message DeleteKillLogResponse {
     int64 response_code = 1;
+}
+
+message GetCallsignFiltersRequest {
+    int64 guild_id = 1;
+}
+
+message GetCallsignFiltersResponse {
+    repeated string filters = 1;
+}
+
+message InsertCallsignFilterRequest {
+    int64 guild_id = 1;
+    string callsign_filter = 2;
+}
+
+message InsertCallsignFilterResponse {
+    bool success = 1;
+}
+
+message DeleteCallsignFilterRequest {
+    int64 guild_id = 1;
+    string callsign_filter = 2;
+}
+
+message DeleteCallsignFilterResponse {
+    bool success = 1;
 }

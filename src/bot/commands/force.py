@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import random
 import string
+import datetime
 from proto import database_service_pb2
 import utils.validateUser as validateUser
 import utils.configManager as configManager
@@ -89,6 +90,74 @@ class Force(commands.Cog):
                 await interaction.response.send_message("You do not have permission to use this command.")
             else:
                 await interaction.response.send_message(user_role_check[1])
+
+    @force_group.command(name="info", description="Get information about your force.")
+    async def force_info(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        # Force server image.
+        # Number of pilots in the force.
+        # Number of online pilots in the force.
+        # Number of online discord users in the force.
+        # Total hours in the last 30 days.
+        user_role_check = validateUser.validateUser(interaction.user, 3, self.bot.configManager.get_config(int(interaction.guild.id)))
+        if user_role_check[0]:
+            guild_icon_url = interaction.guild.icon.url if interaction.guild.icon else None
+
+            request = database_service_pb2.GetForceUsersRequest(guild_id=int(interaction.guild.id))
+            response = self.grpc_client.call_method("DatabaseService", "GetForceUsers", request)
+            if response.users:
+                total_pilots = len(response.users)
+            else:
+                await interaction.followup.send(content="Failed to get all pilots in your force.")
+                return
+
+            request = database_service_pb2.GetAllOnlinePilotsRequest(
+                guild_id=interaction.guild.id
+            )
+            response = self.grpc_client.call_method("DatabaseService", "GetAllOnlinePilots", request)
+            print(len(response.discord_ids))
+            if len(response.discord_ids) > 0:
+                online_users_count = len(response.discord_ids)
+            else:
+                online_users_count = 0
+
+            time_frame_start = datetime.datetime.now() - datetime.timedelta(days=30)
+            request = database_service_pb2.GetPatrolLogsByDateRequest(
+                guild_id=interaction.guild.id,
+                time_frame_start=time_frame_start
+            )
+            response = self.grpc_client.call_method("DatabaseService", "GetPatrolLogsByDate", request)
+            patrol_hours = 0
+            if len(response.patrol_reports):
+                for patrol_report in response.patrol_reports:
+                    start_datetime = patrol_report.start_datetime.ToDatetime()
+                    end_datetime = patrol_report.end_datetime.ToDatetime()
+                    duration = ((end_datetime - start_datetime).total_seconds() / 60) / 60
+                    patrol_hours += duration
+                patrol_hours = round(patrol_hours, 2)
+
+            config = self.configManager.get_config(int(interaction.guild.id))
+            member_role = discord.utils.get(interaction.guild.roles, id=int(config["member_role_id"]))
+
+            embed = discord.Embed(
+                title="Force Information",
+                description=f"Force: {interaction.guild.name}",
+                color=discord.Color.blurple()
+            )
+            embed.set_image(url=guild_icon_url)
+            embed.add_field(name="Guild URL", value=interaction.guild.icon.url)
+            embed.add_field(name="Total Pilots Registerd", value=total_pilots)
+            embed.add_field(name="Online Pilots", value=online_users_count)
+            embed.add_field(name="Total Discord Users", value=len(member_role.members))
+            embed.add_field(name="Total Hours in the last 30 days", value=f"{patrol_hours} hours")
+            await interaction.followup.send(embed=embed)
+        else:
+            if user_role_check[1] is None:
+                await interaction.followup.send("You do not have permission to use this command.")
+                return
+            else:
+                await interaction.followup.send(user_role_check[1])
+                return
 
 async def setup(bot):
     await bot.add_cog(Force(bot))

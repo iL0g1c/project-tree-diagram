@@ -37,6 +37,8 @@ CREATE TABLE patrol_event (
         REFERENCES Account (geofs_account_id),
     CONSTRAINT fk_force FOREIGN KEY (force_code)
         REFERENCES Forces (force_code)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Forces (
@@ -50,7 +52,6 @@ CREATE TABLE Forces (
     callsign_change_channel_id BIGINT,
     callsign_code_channel_id BIGINT,
     callsign_code_loop_enabled BOOLEAN,
-    callsign_format VARCHAR(50),
     kill_log_channel_id BIGINT,
 );
 
@@ -66,4 +67,15 @@ CREATE TABLE kill_event (
         REFERENCES Forces (guild_id),
     CONSTRAINT fk_force_code FOREIGN KEY (force_code)
         REFERENCES Forces (force_code)
-)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE TABLE callsign_filter (
+    callsign_filter VARCHAR(50) PRIMARY KEY,
+    force_code VARCHAR(10) NOT NULL,
+    CONSTRAINT fk_force FOREIGN KEY (force_code)
+        REFERENCES Forces (force_code)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
