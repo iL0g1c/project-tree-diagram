@@ -17,7 +17,7 @@ from utils.configManager import ConfigManager
 import utils.GrpcClient as GrpcClient
 
 load_dotenv()
-BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
+BOT_TOKEN = os.getenv('BOT_BETA_TOKEN')
 
 class TreeDiagram(commands.Bot):
     def __init__(self, botToken):
