@@ -1,0 +1,1 @@
+SELECT callsign_filter FROM callsign_filter;

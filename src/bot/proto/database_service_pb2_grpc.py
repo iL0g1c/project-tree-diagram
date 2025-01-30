@@ -104,6 +104,21 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.DeleteKillLogRequest.SerializeToString,
                 response_deserializer=database__service__pb2.DeleteKillLogResponse.FromString,
                 _registered_method=True)
+        self.GetCallsignFilters = channel.unary_unary(
+                '/DatabaseService/GetCallsignFilters',
+                request_serializer=database__service__pb2.GetCallsignFiltersRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetCallsignFiltersResponse.FromString,
+                _registered_method=True)
+        self.InsertCallsignFilter = channel.unary_unary(
+                '/DatabaseService/InsertCallsignFilter',
+                request_serializer=database__service__pb2.InsertCallsignFilterRequest.SerializeToString,
+                response_deserializer=database__service__pb2.InsertCallsignFilterResponse.FromString,
+                _registered_method=True)
+        self.DeleteCallsignFilter = channel.unary_unary(
+                '/DatabaseService/DeleteCallsignFilter',
+                request_serializer=database__service__pb2.DeleteCallsignFilterRequest.SerializeToString,
+                response_deserializer=database__service__pb2.DeleteCallsignFilterResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -193,6 +208,24 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetCallsignFilters(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InsertCallsignFilter(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteCallsignFilter(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -265,6 +298,21 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.DeleteKillLog,
                     request_deserializer=database__service__pb2.DeleteKillLogRequest.FromString,
                     response_serializer=database__service__pb2.DeleteKillLogResponse.SerializeToString,
+            ),
+            'GetCallsignFilters': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCallsignFilters,
+                    request_deserializer=database__service__pb2.GetCallsignFiltersRequest.FromString,
+                    response_serializer=database__service__pb2.GetCallsignFiltersResponse.SerializeToString,
+            ),
+            'InsertCallsignFilter': grpc.unary_unary_rpc_method_handler(
+                    servicer.InsertCallsignFilter,
+                    request_deserializer=database__service__pb2.InsertCallsignFilterRequest.FromString,
+                    response_serializer=database__service__pb2.InsertCallsignFilterResponse.SerializeToString,
+            ),
+            'DeleteCallsignFilter': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteCallsignFilter,
+                    request_deserializer=database__service__pb2.DeleteCallsignFilterRequest.FromString,
+                    response_serializer=database__service__pb2.DeleteCallsignFilterResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -645,6 +693,87 @@ class DatabaseService(object):
             '/DatabaseService/DeleteKillLog',
             database__service__pb2.DeleteKillLogRequest.SerializeToString,
             database__service__pb2.DeleteKillLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCallsignFilters(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetCallsignFilters',
+            database__service__pb2.GetCallsignFiltersRequest.SerializeToString,
+            database__service__pb2.GetCallsignFiltersResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def InsertCallsignFilter(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/InsertCallsignFilter',
+            database__service__pb2.InsertCallsignFilterRequest.SerializeToString,
+            database__service__pb2.InsertCallsignFilterResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteCallsignFilter(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/DeleteCallsignFilter',
+            database__service__pb2.DeleteCallsignFilterRequest.SerializeToString,
+            database__service__pb2.DeleteCallsignFilterResponse.FromString,
             options,
             channel_credentials,
             insecure,

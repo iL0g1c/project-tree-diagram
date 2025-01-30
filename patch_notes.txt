@@ -3,9 +3,14 @@
 FEATURES
 --------
 /force info command (gets basic info about your force).
+Forces can now set multiple callsign formats.
+/config callsign-filters-get (lists all callsign filters in a force).
+/config callsign-filters-add (allows a force to add a callsign filter).
+/config callsign-filters-remove (allows a force to delete a callsign filter).
 
 CHANGES
 -------
 
 BUG FIXES
 ---------
+TD0005: Users were unable to change the a forces identifier after setting it initially.
