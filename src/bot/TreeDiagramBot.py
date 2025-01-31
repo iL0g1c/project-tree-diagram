@@ -17,7 +17,7 @@ from utils.configManager import ConfigManager
 import utils.GrpcClient as GrpcClient
 
 load_dotenv()
-BOT_TOKEN = os.getenv('BOT_LIVE_TOKEN')
+BOT_TOKEN = os.getenv('BOT_BETA_TOKEN')
 
 class TreeDiagram(commands.Bot):
     def __init__(self, botToken):
@@ -25,6 +25,7 @@ class TreeDiagram(commands.Bot):
         # setting up logger
         self.logger = logging.getLogger("TreeDiagram")
         self.logger.setLevel(logging.DEBUG)
+
         console_handler = logging.StreamHandler(sys.stdout)
         self.logger.addHandler(console_handler)
 
@@ -183,6 +184,10 @@ def patrol_event():
     return jsonify({"success": "ok"}), 200
 
 def run_flask():
+    flask_logger = logging.getLogger("werkzeug")
+    flask_logger.setLevel(logging.INFO)
+    flask_logger_handler = logging.StreamHandler(sys.stdout)
+    flask_logger.addHandler(flask_logger_handler)
     app.run(host='0.0.0.0', port=5001, debug=False)
 
 
