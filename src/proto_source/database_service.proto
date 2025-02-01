@@ -22,6 +22,7 @@ service DatabaseService {
     rpc GetCallsignFilters (GetCallsignFiltersRequest) returns (GetCallsignFiltersResponse);
     rpc InsertCallsignFilter (InsertCallsignFilterRequest) returns (InsertCallsignFilterResponse);
     rpc DeleteCallsignFilter (DeleteCallsignFilterRequest) returns (DeleteCallsignFilterResponse);
+    rpc JoinPatrols (JoinPatrolsRequest) returns (JoinPatrolsResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -201,4 +202,14 @@ message DeleteCallsignFilterRequest {
 
 message DeleteCallsignFilterResponse {
     bool success = 1;
+}
+
+message JoinPatrolsRequest {
+    int64 first_event_id = 1;
+    int64 second_event_id = 2;
+    int64 guild_id = 3;
+}
+
+message JoinPatrolsResponse {
+    int64 response_code = 1;
 }

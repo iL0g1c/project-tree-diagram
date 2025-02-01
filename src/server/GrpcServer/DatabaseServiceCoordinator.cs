@@ -20,6 +20,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetCallsignFiltersHandler _getCallsignFiltersHandler;
     private readonly InsertCallsignFilterHandler _insertCallsignFilterHandler;
     private readonly DeleteCallsignFilterHandler _deleteCallsignFilterHandler;
+    private readonly JoinPatrolsHandler _joinPatrolsHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -40,6 +41,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getCallsignFiltersHandler = new GetCallsignFiltersHandler();
         _insertCallsignFilterHandler = new InsertCallsignFilterHandler();
         _deleteCallsignFilterHandler = new DeleteCallsignFilterHandler();
+        _joinPatrolsHandler = new JoinPatrolsHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -406,8 +408,24 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         }
         catch (Exception ex)
         {
-            ErrorHandler.LogError(1047, ex, "Error during DeleteCallsignFilter");
+            ErrorHandler.LogError(1048, ex, "Error during DeleteCallsignFilter");
             return new DeleteCallsignFilterResponse();
+        }
+    }
+
+    public override async Task<JoinPatrolsResponse> JoinPatrols(JoinPatrolsRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var response_code = await _joinPatrolsHandler.JoinPatrols(request.FirstEventId, request.SecondEventId, request.GuildId);
+            var response = new JoinPatrolsResponse();
+            response.ResponseCode = response_code;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1050, ex, "Error during JoinPatrols");
+            return new JoinPatrolsResponse();
         }
     }
 }

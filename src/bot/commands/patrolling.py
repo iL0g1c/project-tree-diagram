@@ -226,17 +226,6 @@ class Patrolling(commands.Cog):
                 await interaction.response.send_message("You do not have permission to use this command.")
             else:
                 await interaction.response.send_message(user_role_check[1])
-
-    @patrolling_group.command(name="sar", description="Log a SAR.")
-    async def sar(self, interaction: discord.Interaction):
-        user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
-        if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
     
     @patrolling_group.command(name="top-disables", description="Get leaderboard of disables.")
     async def top_disables(self, interaction: discord.Interaction):
@@ -259,17 +248,33 @@ class Patrolling(commands.Cog):
                 await interaction.response.send_message("You do not have permission to use this command.")
             else:
                 await interaction.response.send_message(user_role_check[1])
-    
-    @patrolling_group.command(name="top-sars", description="Get leaderboard of sars.")
-    async def top_sars(self, interaction: discord.Interaction):
+                
+    @patrolling_group.command(name="join-patrols", description="Join to patrols together into one patrol.")
+    @app_commands.describe(
+        first_event_id="ID of the patrol to join to.",
+        second_event_id="ID of the patrol to join from."
+    )
+    async def join_patrols(self, interaction: discord.Interaction, first_event_id: int, second_event_id: int):
+        await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            await interaction.response.send_message("This command has not been implemented.")
+            request = database_service_pb2.JoinPatrolsRequest(
+                first_event_id=first_event_id,
+                second_event_id=second_event_id,
+                guild_id=interaction.guild.id
+            )
+            response = self.grpc_client.call_method("DatabaseService", "JoinPatrols", request)
+            if response.response_code == 0:
+                await interaction.followup.send("Patrols joined successfully.")
+            elif response.response_code == 1:
+                await interaction.followup.send("Could not join those two patrols. (Either they are do not exist, are not in your force, or patrol two was not done after patrol one.)")
+            elif response.response_code == 2:
+                await interaction.followup.send("An exception occurred while joining the patrols.")
         else:
             if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
+                await interaction.followup.send("You do not have permission to use this command.")
             else:
-                await interaction.response.send_message(user_role_check[1])
+                await interaction.followup.send(user_role_check[1])
 
 async def setup(bot):
     await bot.add_cog(Patrolling(bot))

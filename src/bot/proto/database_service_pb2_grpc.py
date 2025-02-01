@@ -119,6 +119,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.DeleteCallsignFilterRequest.SerializeToString,
                 response_deserializer=database__service__pb2.DeleteCallsignFilterResponse.FromString,
                 _registered_method=True)
+        self.JoinPatrols = channel.unary_unary(
+                '/DatabaseService/JoinPatrols',
+                request_serializer=database__service__pb2.JoinPatrolsRequest.SerializeToString,
+                response_deserializer=database__service__pb2.JoinPatrolsResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -226,6 +231,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def JoinPatrols(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -313,6 +324,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.DeleteCallsignFilter,
                     request_deserializer=database__service__pb2.DeleteCallsignFilterRequest.FromString,
                     response_serializer=database__service__pb2.DeleteCallsignFilterResponse.SerializeToString,
+            ),
+            'JoinPatrols': grpc.unary_unary_rpc_method_handler(
+                    servicer.JoinPatrols,
+                    request_deserializer=database__service__pb2.JoinPatrolsRequest.FromString,
+                    response_serializer=database__service__pb2.JoinPatrolsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -774,6 +790,33 @@ class DatabaseService(object):
             '/DatabaseService/DeleteCallsignFilter',
             database__service__pb2.DeleteCallsignFilterRequest.SerializeToString,
             database__service__pb2.DeleteCallsignFilterResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def JoinPatrols(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/JoinPatrols',
+            database__service__pb2.JoinPatrolsRequest.SerializeToString,
+            database__service__pb2.JoinPatrolsResponse.FromString,
             options,
             channel_credentials,
             insecure,
