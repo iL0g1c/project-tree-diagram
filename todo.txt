@@ -1,5 +1,9 @@
 Cache the config file in grpc server. Update config cache when config is updated, and when config is requested immediately send it.
 
+rename patrol report from "configuraiton"
+sort patrol report by end_date
+modify joinpatrols.sql so that it only updates if there are no patrols between the two given (not just one is greater).
+
 patrol joining command (0.5.0)
 add disable command (0.5.0)
 top command (kills, disable, patrol hours) (0.5.0)

@@ -1,23 +1,60 @@
-WITH force_data AS (
-    -- Step 1: Get the force_code for the given guild_id
-    SELECT force_code 
-    FROM Forces 
-    WHERE guild_id = @guild_id
+WITH force_code_cte AS (
+	SELECT force_code
+	FROM forces
+	WHERE guild_id = @guild_id
 ),
-validate_events AS (
-    -- Step 2: Confirm both events have the correct force_code
-    SELECT pe1.event_id AS first_event_id, pe2.event_id AS second_event_id, pe2.end_time
-    FROM patrol_event pe1
-    JOIN patrol_event pe2 ON pe1.geofs_account_id = pe2.geofs_account_id
-    JOIN force_data f ON pe1.force_code = f.force_code AND pe2.force_code = f.force_code
-    WHERE pe1.event_id = @first_event_id
-    AND pe2.event_id = @second_event_id
-    AND pe2.event_id > pe1.event_id -- Step 3: Ensure second_event_id is greater
+excluded_patrols AS (
+	SELECT event_id
+	FROM patrol_event
+	WHERE event_id > @first_event_id AND event_id < @second_event_id
+    AND force_code = (SELECT force_code FROM force_code_cte)
+),
+valid_patrols AS (
+	SELECT *
+	FROM patrol_event
+	WHERE event_id IN (@first_event_id, @second_event_id)
+		AND force_code = (SELECT * FROM force_code_cte)
+		AND NOT EXISTS (
+			SELECT 1
+			FROM excluded_patrols
+	)
 )
 UPDATE patrol_event
-SET end_time = (SELECT end_time FROM validate_events WHERE second_event_id = @second_event_id)
-WHERE event_id = @first_event_id;
+SET end_time = (
+	SELECT end_time
+	FROM valid_patrols
+	WHERE event_id = @second_event_id
+)
+WHERE event_id = @first_event_id
+AND EXISTS (
+	SELECT 1
+	FROM valid_patrols
+);
 
--- Step 5: Delete the row with second_event_id
+WITH force_code_cte AS (
+	SELECT force_code
+	FROM forces
+	WHERE guild_id = @guild_id
+),
+excluded_patrols AS (
+	SELECT event_id
+	FROM patrol_event
+	WHERE event_id > @first_event_id AND event_id < @second_event_id
+    AND force_code = (SELECT force_code FROM force_code_cte)
+),
+valid_patrols AS (
+	SELECT *
+	FROM patrol_event
+	WHERE event_id IN (@first_event_id, @second_event_id)
+		AND force_code = (SELECT * FROM force_code_cte)
+		AND NOT EXISTS (
+			SELECT 1
+			FROM excluded_patrols
+	)
+)
 DELETE FROM patrol_event
-WHERE event_id = @second_event_id;
+WHERE event_id = @second_event_id
+AND EXISTS (
+	SELECT 1
+	FROM valid_patrols
+);
