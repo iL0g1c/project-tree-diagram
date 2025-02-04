@@ -189,7 +189,7 @@ class Patrolling(commands.Cog):
         if user_role_check[0]:
             discord_name_placeholder = "all users"
             if date is not None:
-                minimum_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+                minimum_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
             else:
                 minimum_date = datetime.datetime.min
             if discord_user is not None:
@@ -209,10 +209,11 @@ class Patrolling(commands.Cog):
                 lines = []
                 for patrol in response.patrol_reports:
                     patrol_start_time = patrol.start_datetime.ToDatetime()
-                    patrol_start_time = patrol_start_time.strftime("%Y-%m-%d %H:%M:%S")
+                    patrol_start_time_str = patrol_start_time.strftime("%Y-%m-%d %H:%M:%S")
                     patrol_end_time = patrol.end_datetime.ToDatetime()
-                    patrol_end_time = patrol_end_time.strftime("%Y-%m-%d %H:%M:%S")
-                    lines.append(f"**Event ID:** {patrol.event_id}\n**Start Time:** {patrol_start_time} UTC\n**End Time:** {patrol_end_time} UTC\n**Duration:** {patrol.duration} minutes")
+                    patrol_end_time_str = patrol_end_time.strftime("%Y-%m-%d %H:%M:%S")
+                    duration = round(((patrol_end_time - patrol_start_time).total_seconds() / 60) / 60, 2)
+                    lines.append(f"**Event ID:** {patrol.event_id}\n**Start Time:** {patrol_start_time_str} UTC\n**End Time:** {patrol_end_time_str} UTC\n**Duration:** {duration} minutes")
                 embed = paginationEmbed.PaginatedEmbed(
                     items=lines,
                     title="Patrol's for " + discord_name_placeholder

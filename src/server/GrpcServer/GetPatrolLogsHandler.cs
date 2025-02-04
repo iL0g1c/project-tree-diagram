@@ -23,7 +23,7 @@ class GetPatrolLogsHandler
 
                 using NpgsqlCommand cmd = new NpgsqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@guild_id", guild_id);
-                cmd.Parameters.AddWithValue("@minimum_date", minimum_date);
+                cmd.Parameters.AddWithValue("@date", minimum_date);
                 cmd.Parameters.AddWithValue("@discord_id", discord_id);
 
                 using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
