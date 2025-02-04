@@ -3,6 +3,7 @@
 FEATURES
 --------
 Added /patrolling join-patrols (It joins together two different patrols into on. This is used for instances where you are on a patrol and your internet goes out for a few seconds, so Tree Diagram thought that you went offline and made you start a new patrol.)
+Added /patrolling get-patrols (Get all patrols after a date and/or by user)
 
 
 CHANGES
@@ -10,6 +11,7 @@ CHANGES
 Removed unused /patrolling sar command
 Removed unused /patrolling top-sar command
 Removed deprecated /patrolling patrol-report command
+Listed patrols are now sorted by the patrols end time.
 
 BUG FIXES
 ---------

@@ -16,4 +16,5 @@ SELECT
 FROM patrol_event pe
 JOIN AccountCTE a ON pe.geofs_account_id = a.geofs_account_id
 WHERE pe.start_time > @date
-AND a.discord_id = @discord_id;
+AND a.discord_id = @discord_id
+ORDER BY pe.end_time DESC;

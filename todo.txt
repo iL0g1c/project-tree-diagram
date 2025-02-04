@@ -1,6 +1,5 @@
 Cache the config file in grpc server. Update config cache when config is updated, and when config is requested immediately send it.
 
-sort patrol report by end_date
 fix /force get-all-pilots (CONFIRM AFTER DEPLOYMENT)
 update /force info to use new getpatrolhours rpc
 

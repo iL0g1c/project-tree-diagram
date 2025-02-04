@@ -15,4 +15,5 @@ SELECT
     pe.end_time
 FROM patrol_event pe
 JOIN AccountCTE a ON pe.geofs_account_id = a.geofs_account_id
-WHERE pe.start_time > @date;
+WHERE pe.start_time > @date
+ORDER BY pe.end_time DESC;
