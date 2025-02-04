@@ -223,5 +223,5 @@ message GetPatrolHoursRequest {
 }
 
 message GetPatrolHoursResponse {
-    int64 patrol_hours = 1;
+    double patrol_hours = 1;
 }

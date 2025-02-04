@@ -209,7 +209,7 @@ class Patrolling(commands.Cog):
                     patrol_end_time = patrol.end_datetime.ToDatetime()
                     patrol_end_time_str = patrol_end_time.strftime("%Y-%m-%d %H:%M:%S")
                     duration = round(((patrol_end_time - patrol_start_time).total_seconds() / 60) / 60, 2)
-                    lines.append(f"**Event ID:** {patrol.event_id}\n**Start Time:** {patrol_start_time_str} UTC\n**End Time:** {patrol_end_time_str} UTC\n**Duration:** {duration} minutes")
+                    lines.append(f"**Event ID:** {patrol.event_id}\n**Start Time:** {patrol_start_time_str} UTC\n**End Time:** {patrol_end_time_str} UTC\n**Duration:** {duration} hours")
                 embed = paginationEmbed.PaginatedEmbed(
                     items=lines,
                     title="Patrol's for " + discord_name_placeholder
@@ -246,7 +246,10 @@ class Patrolling(commands.Cog):
 
             if response.patrol_hours > 0:
                 allowed_mentions = discord.AllowedMentions(everyone=False, users=False, roles=False)
-                await interaction.followup.send(f"Total patrol hours for {discord_user.mention} since {minimum_date}: {response.patrol_hours}", allowed_mentions=allowed_mentions)
+                if discord_user is None:
+                    await interaction.followup.send(f"Total patrol hours for the force since {minimum_date}: {response.patrol_hours}", allowed_mentions=allowed_mentions)
+                else:
+                    await interaction.followup.send(f"Total patrol hours for {discord_user.mention} since {minimum_date}: {response.patrol_hours}", allowed_mentions=allowed_mentions)
             else:
                 await interaction.followup.send("No patrol hours found.")
 

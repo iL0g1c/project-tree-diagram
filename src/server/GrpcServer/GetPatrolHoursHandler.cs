@@ -1,3 +1,4 @@
+using Google.Protobuf.WellKnownTypes;
 using Npgsql;
 
 class GetPatrolHoursHandler
@@ -9,11 +10,11 @@ class GetPatrolHoursHandler
         connectionString = dbLayer.connectionString;
     }
 
-    public async Task<Int64> GetPatrolHours(Int64 guild_id, DateTime minimum_date, Int64 discord_id)
+    public async Task<double> GetPatrolHours(Int64 guild_id, DateTime minimum_date, Int64 discord_id)
     {
         try
         {
-            Int64 patrol_hours = 0;
+            double patrol_hours = 0;
 
             using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
             await connection.OpenAsync();
@@ -29,10 +30,11 @@ class GetPatrolHoursHandler
                 using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    var patrol = new Dictionary<string, object>();
-                    DateTime start_time = reader.GetDateTime(2);
-                    DateTime end_time = reader.GetDateTime(3);
-                    patrol_hours += (Int64)(end_time - start_time).TotalMinutes;
+                    object start_time = reader.GetDateTime(2);
+                    object end_time = reader.GetDateTime(3);
+                    Timestamp parsed_start_time = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)start_time);
+                    Timestamp parsed_end_time = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)end_time);
+                    patrol_hours += Math.Round((parsed_end_time - parsed_start_time).Seconds / 3600.0, 2);
                 }
             }
             else
@@ -46,9 +48,11 @@ class GetPatrolHoursHandler
                 using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    DateTime start_time = reader.GetDateTime(2);
-                    DateTime end_time = reader.GetDateTime(3);
-                    patrol_hours += (Int64)(end_time - start_time).TotalMinutes;
+                    object start_time = reader.GetDateTime(2);
+                    object end_time = reader.GetDateTime(3);
+                    Timestamp parsed_start_time = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)start_time);
+                    Timestamp parsed_end_time = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)end_time);
+                    patrol_hours += (parsed_end_time - parsed_start_time).Seconds / 3600.0;
                 }
             }
 
