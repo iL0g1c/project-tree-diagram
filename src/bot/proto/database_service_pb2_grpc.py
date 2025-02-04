@@ -84,11 +84,6 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.DeletePatrolLogRequest.SerializeToString,
                 response_deserializer=database__service__pb2.DeletePatrolLogResponse.FromString,
                 _registered_method=True)
-        self.GetPatrolLogsByDate = channel.unary_unary(
-                '/DatabaseService/GetPatrolLogsByDate',
-                request_serializer=database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
-                response_deserializer=database__service__pb2.GetPatrolLogsByDateResponse.FromString,
-                _registered_method=True)
         self.GetAllOnlinePilots = channel.unary_unary(
                 '/DatabaseService/GetAllOnlinePilots',
                 request_serializer=database__service__pb2.GetAllOnlinePilotsRequest.SerializeToString,
@@ -128,6 +123,11 @@ class DatabaseServiceStub(object):
                 '/DatabaseService/GetPatrolLogs',
                 request_serializer=database__service__pb2.GetPatrolLogsRequest.SerializeToString,
                 response_deserializer=database__service__pb2.GetPatrolLogsResponse.FromString,
+                _registered_method=True)
+        self.GetPatrolHours = channel.unary_unary(
+                '/DatabaseService/GetPatrolHours',
+                request_serializer=database__service__pb2.GetPatrolHoursRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetPatrolHoursResponse.FromString,
                 _registered_method=True)
 
 
@@ -194,12 +194,6 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetPatrolLogsByDate(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def GetAllOnlinePilots(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -243,6 +237,12 @@ class DatabaseServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetPatrolLogs(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPatrolHours(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -301,11 +301,6 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     request_deserializer=database__service__pb2.DeletePatrolLogRequest.FromString,
                     response_serializer=database__service__pb2.DeletePatrolLogResponse.SerializeToString,
             ),
-            'GetPatrolLogsByDate': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetPatrolLogsByDate,
-                    request_deserializer=database__service__pb2.GetPatrolLogsByDateRequest.FromString,
-                    response_serializer=database__service__pb2.GetPatrolLogsByDateResponse.SerializeToString,
-            ),
             'GetAllOnlinePilots': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllOnlinePilots,
                     request_deserializer=database__service__pb2.GetAllOnlinePilotsRequest.FromString,
@@ -345,6 +340,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.GetPatrolLogs,
                     request_deserializer=database__service__pb2.GetPatrolLogsRequest.FromString,
                     response_serializer=database__service__pb2.GetPatrolLogsResponse.SerializeToString,
+            ),
+            'GetPatrolHours': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPatrolHours,
+                    request_deserializer=database__service__pb2.GetPatrolHoursRequest.FromString,
+                    response_serializer=database__service__pb2.GetPatrolHoursResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -628,33 +628,6 @@ class DatabaseService(object):
             _registered_method=True)
 
     @staticmethod
-    def GetPatrolLogsByDate(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/DatabaseService/GetPatrolLogsByDate',
-            database__service__pb2.GetPatrolLogsByDateRequest.SerializeToString,
-            database__service__pb2.GetPatrolLogsByDateResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
     def GetAllOnlinePilots(request,
             target,
             options=(),
@@ -860,6 +833,33 @@ class DatabaseService(object):
             '/DatabaseService/GetPatrolLogs',
             database__service__pb2.GetPatrolLogsRequest.SerializeToString,
             database__service__pb2.GetPatrolLogsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPatrolHours(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetPatrolHours',
+            database__service__pb2.GetPatrolHoursRequest.SerializeToString,
+            database__service__pb2.GetPatrolHoursResponse.FromString,
             options,
             channel_credentials,
             insecure,

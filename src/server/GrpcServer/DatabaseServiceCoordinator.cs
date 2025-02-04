@@ -13,7 +13,6 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly GetForceUsersHandler _getForceUsersHandler;
     private readonly InsertPatrolLogHandler _insertPatrolLogHandler;
     private readonly DeletePatrolLogHandler _deletePatrolLogHandler;
-    private readonly GetPatrolLogsByDateHandler _getPatrolLogsByDateHandler;
     private readonly GetAllOnlinePilotsHandler _getAllOnlinePilotsHandler;
     private readonly InsertKillLogHandler _insertKillLogHandler;
     private readonly DeleteKillLogHandler _deleteKillLogHandler;
@@ -22,6 +21,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly DeleteCallsignFilterHandler _deleteCallsignFilterHandler;
     private readonly JoinPatrolsHandler _joinPatrolsHandler;
     private readonly GetPatrolLogsHandler _getPatrolLogsHandler;
+    private readonly GetPatrolHoursHandler _getPatrolHoursHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -35,7 +35,6 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _getForceUsersHandler = new GetForceUsersHandler();
         _insertPatrolLogHandler = new InsertPatrolLogHandler();
         _deletePatrolLogHandler = new DeletePatrolLogHandler();
-        _getPatrolLogsByDateHandler = new GetPatrolLogsByDateHandler();
         _getAllOnlinePilotsHandler = new GetAllOnlinePilotsHandler();
         _insertKillLogHandler = new InsertKillLogHandler();
         _deleteKillLogHandler = new DeleteKillLogHandler();
@@ -44,6 +43,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _deleteCallsignFilterHandler = new DeleteCallsignFilterHandler();
         _joinPatrolsHandler = new JoinPatrolsHandler();
         _getPatrolLogsHandler = new GetPatrolLogsHandler();
+        _getPatrolHoursHandler = new GetPatrolHoursHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -284,31 +284,6 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         }
     }
 
-    public override async Task<GetPatrolLogsByDateResponse> GetPatrolLogsByDate(GetPatrolLogsByDateRequest request, ServerCallContext context)
-    {
-        try
-        {
-            var patrol_reports = await _getPatrolLogsByDateHandler.GetPatrolLogsByDate(request.GuildId, request.TimeFrameStart.ToDateTime());
-            var response = new GetPatrolLogsByDateResponse();
-            foreach (var patrol in patrol_reports)
-            {
-                response.PatrolReports.Add(new PatrolReport
-                {
-                    EventId = (Int64) patrol["event_id"],
-                    DiscordId = (Int64) patrol["discord_id"],
-                    StartDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["start_time"]),
-                    EndDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["end_time"])
-                });
-            }
-            return response;
-        }
-        catch (Exception ex)
-        {
-            ErrorHandler.LogError(1037, ex, "Error during GetPatrolLogsByDate");
-            return new GetPatrolLogsByDateResponse();
-        }
-    }
-
     public override async Task<GetAllOnlinePilotsResponse> GetAllOnlinePilots(GetAllOnlinePilotsRequest request, ServerCallContext context)
     {
         try
@@ -451,8 +426,24 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         }
         catch (Exception ex)
         {
-            ErrorHandler.LogError(1051, ex, "Error during GetPatrolLogs");
+            ErrorHandler.LogError(1052, ex, "Error during GetPatrolLogs");
             return new GetPatrolLogsResponse();
+        }
+    }
+
+    public override async Task<GetPatrolHoursResponse> GetPatrolHours(GetPatrolHoursRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var patrol_hours = await _getPatrolHoursHandler.GetPatrolHours(request.GuildId, request.MinimumDate.ToDateTime(), request.DiscordId);
+            var response = new GetPatrolHoursResponse();
+            response.PatrolHours = patrol_hours;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1053, ex, "Error during GetPatrolHours");
+            return new GetPatrolHoursResponse();
         }
     }
 }

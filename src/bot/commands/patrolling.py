@@ -217,6 +217,44 @@ class Patrolling(commands.Cog):
                 await interaction.followup.send(embed=embed.embed, view=embed)
             else:
                 await interaction.followup.send("No patrols found.")
+
+    @patrolling_group.command(name="get-patrol-hours", description="Get patrol hours after a certain date and/or by user.")
+    @app_commands.describe(
+        date="Date to get all following patrols since then. (Format: YYYY-MM-DD HH:MM:SS)",
+        discord_user="Discord user to get patrols for."
+    )
+    async def get_patrol_hours(self, interaction: discord.Interaction, date: str=None, discord_user: discord.User=None):
+        await interaction.response.defer()
+        user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
+        if user_role_check[0]:
+            discord_name_placeholder = "all users"
+            if date is not None:
+                minimum_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+            else:
+                minimum_date = datetime.datetime.min
+            if discord_user is not None:
+                discord_id = discord_user.id
+            else:
+                discord_id = 0
+
+            request = database_service_pb2.GetPatrolHoursRequest(
+                guild_id=interaction.guild.id,
+                minimum_date=minimum_date,
+                discord_id=discord_id
+            )
+            response = self.grpc_client.call_method("DatabaseService", "GetPatrolHours", request)
+
+            if response.patrol_hours > 0:
+                allowed_mentions = discord.AllowedMentions(everyone=False, users=False, roles=False)
+                await interaction.followup.send(f"Total patrol hours for {discord_user.mention} since {minimum_date}: {response.patrol_hours}", allowed_mentions=allowed_mentions)
+            else:
+                await interaction.followup.send("No patrol hours found.")
+
+        else:
+            if user_role_check[1] is None:
+                await interaction.response.send_message("You do not have permission to use this command.")
+            else:
+                await interaction.response.send_message(user_role_check[1])
     
     @patrolling_group.command(name="top-disables", description="Get leaderboard of disables.")
     async def top_disables(self, interaction: discord.Interaction):

@@ -2,9 +2,11 @@ Cache the config file in grpc server. Update config cache when config is updated
 
 fix /force get-all-pilots (CONFIRM AFTER DEPLOYMENT)
 update /force info to use new getpatrolhours rpc
+fix timezone bug in get-patrols
 
 add disable command (0.5.0)
 top command (kills, disable, patrol hours) (0.5.0)
 patrolling get-patrol-hours (after date and/or by user). (0.5.0)
+
 
 setup so that the live and beta backends can run in dual mode.

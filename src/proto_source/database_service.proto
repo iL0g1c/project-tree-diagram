@@ -15,7 +15,6 @@ service DatabaseService {
     rpc GetForceUsers (GetForceUsersRequest) returns (GetForceUsersResponse);
     rpc InsertPatrolLog (InsertPatrolLogRequest) returns (InsertPatrolLogResponse);
     rpc DeletePatrolLog (DeletePatrolLogRequest) returns (DeletePatrolLogResponse);
-    rpc GetPatrolLogsByDate (GetPatrolLogsByDateRequest) returns (GetPatrolLogsByDateResponse);
     rpc GetAllOnlinePilots (GetAllOnlinePilotsRequest) returns (GetAllOnlinePilotsResponse);
     rpc InsertKillLog (InsertKillLogRequest) returns (InsertKillLogResponse);
     rpc DeleteKillLog (DeleteKillLogRequest) returns (DeleteKillLogResponse);
@@ -24,6 +23,7 @@ service DatabaseService {
     rpc DeleteCallsignFilter (DeleteCallsignFilterRequest) returns (DeleteCallsignFilterResponse);
     rpc JoinPatrols (JoinPatrolsRequest) returns (JoinPatrolsResponse);
     rpc GetPatrolLogs (GetPatrolLogsRequest) returns (GetPatrolLogsResponse);
+    rpc GetPatrolHours (GetPatrolHoursRequest) returns (GetPatrolHoursResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -135,20 +135,11 @@ message DeletePatrolLogResponse {
     int64 response_code = 1;
 }
 
-message GetPatrolLogsByDateRequest {
-    int64 guild_id = 1;
-    google.protobuf.Timestamp time_frame_start = 2;
-}
-
 message PatrolReport {
     int64 event_id = 1;
     int64 discord_id = 2;
     google.protobuf.Timestamp start_datetime = 3;
     google.protobuf.Timestamp end_datetime = 4;
-}
-
-message GetPatrolLogsByDateResponse {
-    repeated PatrolReport patrol_reports = 1;
 }
 
 message GetAllOnlinePilotsRequest {
@@ -223,4 +214,14 @@ message GetPatrolLogsRequest {
 
 message GetPatrolLogsResponse {
     repeated PatrolReport patrol_reports = 1;
+}
+
+message GetPatrolHoursRequest {
+    int64 guild_id = 1;
+    google.protobuf.Timestamp minimum_date = 2;
+    int64 discord_id = 3;
+}
+
+message GetPatrolHoursResponse {
+    int64 patrol_hours = 1;
 }
