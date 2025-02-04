@@ -12,7 +12,9 @@ Removed unused /patrolling sar command
 Removed unused /patrolling top-sar command
 Removed deprecated /patrolling patrol-report command
 Listed patrols are now sorted by the patrols end time.
+Date in various commands has been simplified.
 
 BUG FIXES
 ---------
 TD0006: /force get-all-pilots command was broken
+TD0007: /patrolling manual-log recorded an incorrect time in the database.

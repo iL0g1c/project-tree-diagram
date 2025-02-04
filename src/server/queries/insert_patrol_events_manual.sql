@@ -13,14 +13,7 @@ inserted AS (
     INSERT INTO patrol_event (geofs_account_id, start_time, end_time, force_code)
     SELECT
         afc.geofs_account_id,
-        (
-            SELECT detected_at
-            FROM online_status_change
-            WHERE geofs_account_id = afc.geofs_account_id
-            AND is_online = TRUE
-            ORDER BY detected_at DESC
-            LIMIT 1
-        ),
+        @start_time,
         @end_time,
         afc.force_code
     FROM account_force_code afc

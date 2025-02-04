@@ -81,18 +81,14 @@ class Patrolling(commands.Cog):
 
     @patrolling_group.command(name="manual_log", description="Manually log a patrol.")
     @app_commands.describe(
-        start_year="Year of the start of the patrol.",
-        start_month="Month of the start of the patrol.",
-        start_day="Day of the start of the patrol.",
-        start_hour="Hour of the start of the patrol.",
-        start_minute="Minute of the start of the patrol.",
+        start_date="Date to get all following patrols since then. (Format: YYYY-MM-DD HH:MM:SS)",
         patrol_duration="Duration of the patrol in MINUTES."
     )
-    async def log_patrol(self, interaction: discord.Interaction, start_year: int, start_month: int, start_day: int, start_hour: int, start_minute: int, patrol_duration: int):
+    async def log_patrol(self, interaction: discord.Interaction, start_date: str, patrol_duration: int):
         await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            start_time = datetime.datetime(start_year, start_month, start_day, start_hour, start_minute)
+            start_time = datetime.datetime.strptime(start_date, "%Y-%m-%d %H:%M:%S")
             end_time = start_time + datetime.timedelta(minutes=patrol_duration)
             request = database_service_pb2.InsertPatrolLogRequest(
                 discord_id=interaction.user.id,
