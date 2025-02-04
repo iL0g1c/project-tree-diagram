@@ -51,8 +51,10 @@ class Force(commands.Cog):
                 allowed_mentions = discord.AllowedMentions.none()
                 for user in response.users:
                     user_obj = self.bot.get_user(int(user.discord_id))
-                    if user:
+                    if user_obj:
                         lines.append(f"{user_obj.mention} - {user.geofs_account_id}")
+                    else:
+                        lines.append(f"User not found - {user.geofs_account_id}")
                 embed = paginationEmbed.PaginatedEmbed(
                     items=lines,
                     title="All Pilots registered in your force",
@@ -115,7 +117,7 @@ class Force(commands.Cog):
                 guild_id=interaction.guild.id
             )
             response = self.grpc_client.call_method("DatabaseService", "GetAllOnlinePilots", request)
-            print(len(response.discord_ids))
+            
             if len(response.discord_ids) > 0:
                 online_users_count = len(response.discord_ids)
             else:

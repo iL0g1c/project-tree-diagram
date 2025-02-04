@@ -2,11 +2,15 @@
 =============================
 FEATURES
 --------
+Added /patrolling join-patrols (It joins together two different patrols into on. This is used for instances where you are on a patrol and your internet goes out for a few seconds, so Tree Diagram thought that you went offline and made you start a new patrol.)
+
 
 CHANGES
 -------
 Removed unused /patrolling sar command
 Removed unused /patrolling top-sar command
+Removed deprecated /patrolling patrol-report command
 
 BUG FIXES
 ---------
+TD0006: /force get-all-pilots command was broken

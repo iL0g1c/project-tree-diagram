@@ -124,6 +124,11 @@ class DatabaseServiceStub(object):
                 request_serializer=database__service__pb2.JoinPatrolsRequest.SerializeToString,
                 response_deserializer=database__service__pb2.JoinPatrolsResponse.FromString,
                 _registered_method=True)
+        self.GetPatrolLogs = channel.unary_unary(
+                '/DatabaseService/GetPatrolLogs',
+                request_serializer=database__service__pb2.GetPatrolLogsRequest.SerializeToString,
+                response_deserializer=database__service__pb2.GetPatrolLogsResponse.FromString,
+                _registered_method=True)
 
 
 class DatabaseServiceServicer(object):
@@ -237,6 +242,12 @@ class DatabaseServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetPatrolLogs(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -329,6 +340,11 @@ def add_DatabaseServiceServicer_to_server(servicer, server):
                     servicer.JoinPatrols,
                     request_deserializer=database__service__pb2.JoinPatrolsRequest.FromString,
                     response_serializer=database__service__pb2.JoinPatrolsResponse.SerializeToString,
+            ),
+            'GetPatrolLogs': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPatrolLogs,
+                    request_deserializer=database__service__pb2.GetPatrolLogsRequest.FromString,
+                    response_serializer=database__service__pb2.GetPatrolLogsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -817,6 +833,33 @@ class DatabaseService(object):
             '/DatabaseService/JoinPatrols',
             database__service__pb2.JoinPatrolsRequest.SerializeToString,
             database__service__pb2.JoinPatrolsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPatrolLogs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/DatabaseService/GetPatrolLogs',
+            database__service__pb2.GetPatrolLogsRequest.SerializeToString,
+            database__service__pb2.GetPatrolLogsResponse.FromString,
             options,
             channel_credentials,
             insecure,

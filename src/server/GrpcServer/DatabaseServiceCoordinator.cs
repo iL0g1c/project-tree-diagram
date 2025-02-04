@@ -21,6 +21,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
     private readonly InsertCallsignFilterHandler _insertCallsignFilterHandler;
     private readonly DeleteCallsignFilterHandler _deleteCallsignFilterHandler;
     private readonly JoinPatrolsHandler _joinPatrolsHandler;
+    private readonly GetPatrolLogsHandler _getPatrolLogsHandler;
 
     public DatabaseServiceCoordinator()
     {
@@ -42,6 +43,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         _insertCallsignFilterHandler = new InsertCallsignFilterHandler();
         _deleteCallsignFilterHandler = new DeleteCallsignFilterHandler();
         _joinPatrolsHandler = new JoinPatrolsHandler();
+        _getPatrolLogsHandler = new GetPatrolLogsHandler();
     }
 
     public override async Task<InsertUserDiscordIdResponse> InsertUserDiscordId(InsertUserDiscordIdRequest request, ServerCallContext context)
@@ -426,6 +428,31 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             ErrorHandler.LogError(1050, ex, "Error during JoinPatrols");
             return new JoinPatrolsResponse();
+        }
+    }
+
+    public override async Task<GetPatrolLogsResponse> GetPatrolLogs(GetPatrolLogsRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var patrols = await _getPatrolLogsHandler.GetPatrolLogs(request.GuildId, request.MinimumDate.ToDateTime(), request.DiscordId);
+            var response = new GetPatrolLogsResponse();
+            foreach (var patrol in patrols)
+            {
+                response.PatrolReports.Add(new PatrolReport
+                {
+                    EventId = (Int64) patrol["event_id"],
+                    DiscordId = (Int64) patrol["discord_id"],
+                    StartDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["start_time"]),
+                    EndDatetime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime((DateTime)patrol["end_time"])
+                });
+            }
+            return response;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.LogError(1051, ex, "Error during GetPatrolLogs");
+            return new GetPatrolLogsResponse();
         }
     }
 }

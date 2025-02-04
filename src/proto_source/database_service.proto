@@ -23,6 +23,7 @@ service DatabaseService {
     rpc InsertCallsignFilter (InsertCallsignFilterRequest) returns (InsertCallsignFilterResponse);
     rpc DeleteCallsignFilter (DeleteCallsignFilterRequest) returns (DeleteCallsignFilterResponse);
     rpc JoinPatrols (JoinPatrolsRequest) returns (JoinPatrolsResponse);
+    rpc GetPatrolLogs (GetPatrolLogsRequest) returns (GetPatrolLogsResponse);
 }
 
 message UserCallsignChangeEvent {
@@ -212,4 +213,14 @@ message JoinPatrolsRequest {
 
 message JoinPatrolsResponse {
     int64 response_code = 1;
+}
+
+message GetPatrolLogsRequest {
+    int64 guild_id = 1;
+    google.protobuf.Timestamp minimum_date = 2;
+    int64 discord_id = 3;
+}
+
+message GetPatrolLogsResponse {
+    repeated PatrolReport patrol_reports = 1;
 }

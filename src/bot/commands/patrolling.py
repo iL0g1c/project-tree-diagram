@@ -178,54 +178,48 @@ class Patrolling(commands.Cog):
             else:
                 await interaction.followup.send(user_role_check[1])
 
-    @patrolling_group.command(
-        name="patrol-report",
-        description="Get a report on patrols done since a specified date.")
+    @patrolling_group.command(name="get-patrols", description="Get patrols by date and/or user.")
     @app_commands.describe(
-        year="Year of start date for patrol acceptance.",
-        month="Month of start date for patrol acceptance.",
-        day="Day of start date for patrol acceptance."
+        date="Date to get all following patrols since then. (Format: YYYY-MM-DD HH:MM:SS)",
+        discord_user="Discord user to get patrols for."
     )
-    async def patrol_report(self, interaction: discord.Interaction, year: int, month: int, day: int):
+    async def get_patrols(self, interaction: discord.Interaction, date: str=None, discord_user: discord.User=None):
         await interaction.response.defer()
         user_role_check = validateUser.validateUser(interaction.user, 4, self.bot.configManager.get_config(int(interaction.guild.id)))
         if user_role_check[0]:
-            time_frame_start = datetime.datetime(year, month, day, 0, 0, 0)
-            request = database_service_pb2.GetPatrolLogsByDateRequest(
+            discord_name_placeholder = "all users"
+            if date is not None:
+                minimum_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+            else:
+                minimum_date = datetime.datetime.min
+            if discord_user is not None:
+                discord_id = discord_user.id
+                discord_name_placeholder = discord_user.name
+            else:
+                discord_id = 0
+
+            request = database_service_pb2.GetPatrolLogsRequest(
                 guild_id=interaction.guild.id,
-                time_frame_start=time_frame_start
+                minimum_date=minimum_date,
+                discord_id=discord_id
             )
-            response = self.grpc_client.call_method("DatabaseService", "GetPatrolLogsByDate", request)
+            response = self.grpc_client.call_method("DatabaseService", "GetPatrolLogs", request)
+
             if len(response.patrol_reports) > 0:
                 lines = []
-                for patrol_report in response.patrol_reports:
-                    event_id = patrol_report.event_id
-                    discord_user = self.bot.get_user(patrol_report.discord_id)
-
-                    start_datetime = patrol_report.start_datetime.ToDatetime()
-                    end_datetime = patrol_report.end_datetime.ToDatetime()
-
-                    duration = round((end_datetime - start_datetime).total_seconds() / 60)
-                    
-                    start_datetime = start_datetime.astimezone(pytz.timezone("UTC"))
-                    start_datetime = start_datetime.strftime("%Y-%m-%d %H:%M:%S")
-                    end_datetime = end_datetime.astimezone(pytz.timezone("UTC"))
-                    end_datetime = end_datetime.strftime("%Y-%m-%d %H:%M:%S")
-
-                    lines.append(f"**{response.patrol_reports.index(patrol_report) + 1}.** **Event ID:** {event_id} \| **User:** {discord_user} \| **Start:** {start_datetime} UTC \| **End:** {end_datetime} UTC \| **Duration:** {duration} minutes")
-
+                for patrol in response.patrol_reports:
+                    patrol_start_time = patrol.start_datetime.ToDatetime()
+                    patrol_start_time = patrol_start_time.strftime("%Y-%m-%d %H:%M:%S")
+                    patrol_end_time = patrol.end_datetime.ToDatetime()
+                    patrol_end_time = patrol_end_time.strftime("%Y-%m-%d %H:%M:%S")
+                    lines.append(f"**Event ID:** {patrol.event_id}\n**Start Time:** {patrol_start_time} UTC\n**End Time:** {patrol_end_time} UTC\n**Duration:** {patrol.duration} minutes")
                 embed = paginationEmbed.PaginatedEmbed(
                     items=lines,
-                    title="Configuration Keys"
+                    title="Patrol's for " + discord_name_placeholder
                 )
                 await interaction.followup.send(embed=embed.embed, view=embed)
             else:
-                await interaction.followup.send("No patrol logs for your force in the selected time frame were in the database.")
-        else:
-            if user_role_check[1] is None:
-                await interaction.response.send_message("You do not have permission to use this command.")
-            else:
-                await interaction.response.send_message(user_role_check[1])
+                await interaction.followup.send("No patrols found.")
     
     @patrolling_group.command(name="top-disables", description="Get leaderboard of disables.")
     async def top_disables(self, interaction: discord.Interaction):
