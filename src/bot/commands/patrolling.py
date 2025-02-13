@@ -245,11 +245,12 @@ class Patrolling(commands.Cog):
             response = self.grpc_client.call_method("DatabaseService", "GetPatrolHours", request)
 
             if response.patrol_hours > 0:
+                minimum_date_str = minimum_date.strftime("%Y-%m-%d %H:%M:%S")
                 allowed_mentions = discord.AllowedMentions(everyone=False, users=False, roles=False)
                 if discord_user is None:
-                    await interaction.followup.send(f"Total patrol hours for the force since {minimum_date}: {response.patrol_hours}", allowed_mentions=allowed_mentions)
+                    await interaction.followup.send(f"Total patrol hours for the force since {minimum_date_str}: **{response.patrol_hours} hours**", allowed_mentions=allowed_mentions)
                 else:
-                    await interaction.followup.send(f"Total patrol hours for {discord_user.mention} since {minimum_date}: {response.patrol_hours}", allowed_mentions=allowed_mentions)
+                    await interaction.followup.send(f"Total patrol hours for {discord_user.mention} since {minimum_date_str}: **{response.patrol_hours} hours**", allowed_mentions=allowed_mentions)
             else:
                 await interaction.followup.send("No patrol hours found.")
 

@@ -437,6 +437,7 @@ public class DatabaseServiceCoordinator : DatabaseService.DatabaseServiceBase
         {
             var patrol_hours = await _getPatrolHoursHandler.GetPatrolHours(request.GuildId, request.MinimumDate.ToDateTime(), request.DiscordId);
             var response = new GetPatrolHoursResponse();
+            patrol_hours = Math.Round(patrol_hours, 2);
             response.PatrolHours = patrol_hours;
             return response;
         }
